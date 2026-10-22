@@ -24,7 +24,13 @@ def sh(cmd, check=True):
 
 
 t0 = time.time()
-sh("nvidia-smi --query-gpu=name,memory.total --format=csv")
+import torch  # preinstalled in the Kaggle image
+
+print("torch", torch.__version__, "| cuda available:", torch.cuda.is_available(),
+      "|", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "NO GPU", flush=True)
+if not torch.cuda.is_available():
+    sys.exit("No GPU attached to this kernel (account not phone-verified, GPU quota used up, or accelerator not granted). "
+             "Refusing to run on CPU.")
 sh(f"git clone -q {REPO} /kaggle/repo && cd /kaggle/repo && git checkout -q {COMMIT} && git log --oneline -1")
 os.chdir("/kaggle/repo")
 sh("pip install -q -r requirements-colab.txt 2>&1 | tail -n 3")

@@ -56,7 +56,7 @@ def push(batch: str, configs: list[str], commit: str | None) -> None:
             "is_private": "true", "enable_gpu": "true", "enable_internet": "true", "machine_shape": "NvidiaTeslaT4",
             "dataset_sources": [], "competition_sources": [], "kernel_sources": [], "model_sources": []}
     (d / "kernel-metadata.json").write_text(json.dumps(meta, indent=2))
-    subprocess.run(["kaggle", "kernels", "push", "-p", str(d)], check=True)
+    subprocess.run(["kaggle", "kernels", "push", "-p", str(d), "--accelerator", "NvidiaTeslaT4"], check=True)
     shutil.rmtree(d, ignore_errors=True)
     print(f"pushed {kid} @ {commit[:8]} with {len(configs)} config(s)")
 
