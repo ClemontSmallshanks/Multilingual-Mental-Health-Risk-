@@ -67,7 +67,10 @@ class NeuralAdapter(Adapter):
     ckpt_dir = property(lambda self: self._dir)
 
     def predict_logits(self, task, texts):
-        return predict_logits(self.model, self.tok, texts, task, self.device)
+        # use the max_len / truncation the checkpoint was trained with (older checkpoints: defaults)
+        tc = self.meta.get("train_config", {})
+        return predict_logits(self.model, self.tok, texts, task, self.device, max_len=tc.get("max_len", {}).get(task),
+                              truncation=tc.get("truncation", {}).get(task, "head"), head_tokens=tc.get("head_tokens", 64))
 
     def n_parameters(self):
         return self.model.n_parameters()

@@ -26,3 +26,6 @@ logs/
 .env
 .env.*
 .DS_Store
+
+# experiment runs: metrics/predictions are small and may be committed deliberately; checkpoints never
+runs/**/checkpoint/

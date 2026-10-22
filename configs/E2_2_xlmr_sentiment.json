@@ -1,0 +1,25 @@
+{
+  "name": "E2_2_xlmr_sentiment",
+  "plan_id": "E2.2",
+  "description": "M2: XLM-R base control (Conneau et al. 2020), single-task sentiment. Validation only until selected.",
+  "model_name": "FacebookAI/xlm-roberta-base",
+  "tasks": [
+    "sentiment"
+  ],
+  "seeds": [
+    13,
+    21
+  ],
+  "evaluate_test": false,
+  "save_checkpoint": false,
+  "train": {
+    "epochs": 3,
+    "batch_size": 16,
+    "encoder_lr": 3e-05,
+    "head_lr": 0.0005,
+    "warmup_ratio": 0.06,
+    "weight_decay": 0.01,
+    "patience": 2,
+    "amp": true
+  }
+}

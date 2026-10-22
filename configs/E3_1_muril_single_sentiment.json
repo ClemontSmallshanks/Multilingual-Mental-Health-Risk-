@@ -1,0 +1,28 @@
+{
+  "name": "E3_1_muril_single_sentiment",
+  "plan_id": "E3.1",
+  "description": "Ablation: single-task MuRIL (sentiment) with exactly the R2 hyperparameters and seeds. Pre-registered final evaluation #4.",
+  "model_name": "google/muril-base-cased",
+  "tasks": [
+    "sentiment"
+  ],
+  "seeds": [
+    13,
+    21,
+    42,
+    55,
+    77
+  ],
+  "evaluate_test": true,
+  "save_checkpoint": false,
+  "train": {
+    "epochs": 3,
+    "batch_size": 16,
+    "encoder_lr": 3e-05,
+    "head_lr": 0.0005,
+    "warmup_ratio": 0.06,
+    "weight_decay": 0.01,
+    "patience": 2,
+    "amp": true
+  }
+}

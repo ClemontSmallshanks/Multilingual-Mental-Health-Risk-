@@ -1,0 +1,25 @@
+{
+  "name": "E2_1_hingroberta_sentiment",
+  "plan_id": "E2.1",
+  "description": "M2: Hinglish-specific encoder (Nayak & Joshi 2022), single-task sentiment. Compare against E3_1_muril_single_sentiment. Validation only until selected.",
+  "model_name": "l3cube-pune/hing-roberta",
+  "tasks": [
+    "sentiment"
+  ],
+  "seeds": [
+    13,
+    21
+  ],
+  "evaluate_test": false,
+  "save_checkpoint": false,
+  "train": {
+    "epochs": 3,
+    "batch_size": 16,
+    "encoder_lr": 3e-05,
+    "head_lr": 0.0005,
+    "warmup_ratio": 0.06,
+    "weight_decay": 0.01,
+    "patience": 2,
+    "amp": true
+  }
+}

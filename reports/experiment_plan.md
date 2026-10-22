@@ -1,6 +1,6 @@
 # Experiment plan: literature-backed upgrade
 
-*Status: **plan only. None of the experiments below has been run.** No numbers in this file are results. Baseline numbers quoted are the existing single-seed MuRIL results from `reports/metrics/` (seed 13), verified in `research_audit.md`.*
+*Status (updated 2026-10-22): Stage 2 framework implemented (`configs/`, `scripts/run_experiment.py`, `scripts/aggregate_runs.py`, `notebooks/colab_experiments.ipynb`; see `reproducibility.md`). **No experiment below has been run yet.** No numbers in this file are results. Baseline numbers quoted are the existing single-seed MuRIL results from `reports/metrics/` (seed 13), verified in `research_audit.md`.*
 
 ## 0. Research question
 
@@ -35,7 +35,7 @@ A negative result (no significant gain) is an acceptable, reportable outcome. It
 
 | ID | Experiment | Cost (CPU, 4 cores) |
 |---|---|---|
-| R0 | Pin `requirements.txt`; add `configs/`; per-run directories; frozen split file + assertion; deterministic flags; fix emotion error-rate naming | ~0.5 day dev, no training |
+| R0 | ✅ **Done:** pinned requirements, `configs/`, per-run directories, frozen split + automatic check, deterministic flag, emotion error-rate split into per-label vs exact-set | — |
 | R1 | TF-IDF baseline × 5 seeds (seed only affects nothing deterministic, so 1 run + note) | minutes |
 | R2 | MuRIL multi-task, current config, **× 5 seeds** | ~10 h CPU · ~1 h GPU (est.) |
 
@@ -53,7 +53,7 @@ R2 becomes **the** baseline for every later comparison. The existing single-seed
 | ID | Variant (only one factor changes vs R2) | Selection |
 |---|---|---|
 | E1.1 | `max_len_risk=256` (head truncation) | val |
-| E1.2 | head+tail truncation (64 + 192) | val |
+| E1.2 | head+tail truncation (first 64 + last 190 tokens of a 256 budget, i.e. Sun et al.'s ~25 % head ratio) | val |
 | E1.3 | Grid: encoder LR ∈ {1e-5, 2e-5, 3e-5} × head LR ∈ {5e-5, 1e-4, 2e-4} (9 cells), 2 seeds, up to 10 epochs (Mosbach-style longer budget), early stop on val macro-F1 with patience 3 **and** report val loss | val |
 | E1.4 | Best of E1.1–E1.3 combined, × 5 seeds → test once | **final** |
 
@@ -77,8 +77,8 @@ The existing gap (0.696 vs 0.557) confounds language with platform, annotator an
 |---|---|---|---|
 | E2.1 | **Hinglish-specific encoder**: `l3cube-pune/hing-roberta` (CC-BY-4.0) single-task sentiment | Nayak & Joshi (2022) pre-trained HingBERT/HingMBERT/HingRoBERTa on L3Cube-HingCorpus (52.93 M Roman-script Hindi-English sentences scraped from Twitter) and evaluated them on GLUECoS tasks including code-mixed sentiment | Different tokenizer; same splits/labels. The pre-training corpus is Twitter-derived, so overlap with our `tweets-hindi` test texts is possible. Masked-LM pre-training on test text is a contamination risk, so the overlap check is mandatory |
 | E2.2 | **XLM-R base** (MIT) single-task | Conneau et al. (2020); used as code-switching baseline in GLUECoS (Khanuja et al., 2020) | Controls for "MuRIL vs any multilingual encoder" |
-| E2.3 | **Transliteration to Devanagari** of hi-Latn input (IndicXlit / Aksharantar models, `ai4bharat-transliteration`), then MuRIL | Madhani et al. (2022) (Aksharantar); Roark et al. (2020) (Dakshina) document romanisation variability; MuRIL was pre-trained with transliterated data (Khanuja et al., 2021) | English words in code-mixed text may be wrongly transliterated. Variants: (a) all tokens, (b) only tokens the language-ID marks Hindi. Original text kept; transformation logged. Choice made on **val** only |
-| E2.4 | **Conservative spelling normalisation** (lower-case, character-repeat squashing "sooo"→"soo", fixed mapping list built from **train/val only**) | Motivated by romanisation variability [Roark 2020]; a deliberately weak baseline for E2.3 | Mapping list frozen before test evaluation |
+| E2.3 *(not yet implemented)* | **Transliteration to Devanagari** of hi-Latn input (IndicXlit / Aksharantar models, `ai4bharat-transliteration`), then MuRIL | Madhani et al. (2022) (Aksharantar); Roark et al. (2020) (Dakshina) document romanisation variability; MuRIL was pre-trained with transliterated data (Khanuja et al., 2021) | English words in code-mixed text may be wrongly transliterated. Variants: (a) all tokens, (b) only tokens the language-ID marks Hindi. Original text kept; transformation logged. Choice made on **val** only |
+| E2.4 *(not yet implemented)* | **Conservative spelling normalisation** (lower-case, character-repeat squashing "sooo"→"soo", fixed mapping list built from **train/val only**) | Motivated by romanisation variability [Roark 2020]; a deliberately weak baseline for E2.3 | Mapping list frozen before test evaluation |
 
 *Selection rule:* the single best variant on val goes to a 5-seed test evaluation. The others are reported with val numbers only, to avoid test reuse.
 

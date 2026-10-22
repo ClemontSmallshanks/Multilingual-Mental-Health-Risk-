@@ -49,6 +49,8 @@ def synthetic_tables(tmp: Path) -> Path:
 def processed_dir(tmp_path, monkeypatch):
     d = synthetic_tables(tmp_path)
     monkeypatch.setattr("src.data.datasets.PROCESSED_DIR", d)
+    monkeypatch.setattr("src.data.datasets.SPLITS_DIR", tmp_path / "no_frozen_splits")  # fixtures aren't the real split
+    monkeypatch.setattr("src.data.datasets._VERIFIED", set())
     return d
 
 

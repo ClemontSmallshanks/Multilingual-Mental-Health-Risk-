@@ -1,0 +1,30 @@
+{
+  "name": "R2_muril_multitask_baseline",
+  "plan_id": "R2",
+  "description": "Current MuRIL multi-task configuration (head LR = legacy 0.5 * 1e-3) x 5 seeds. THE baseline for every comparison. Pre-registered final evaluation #1.",
+  "model_name": "google/muril-base-cased",
+  "tasks": [
+    "sentiment",
+    "emotion",
+    "risk"
+  ],
+  "seeds": [
+    13,
+    21,
+    42,
+    55,
+    77
+  ],
+  "evaluate_test": true,
+  "save_checkpoint": false,
+  "train": {
+    "epochs": 3,
+    "batch_size": 16,
+    "encoder_lr": 3e-05,
+    "head_lr": 0.0005,
+    "warmup_ratio": 0.06,
+    "weight_decay": 0.01,
+    "patience": 2,
+    "amp": true
+  }
+}

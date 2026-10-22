@@ -172,6 +172,10 @@ UI: / /analyze /playground /models /languages /errors /batch /health-ui /about
 ```
 Response (abridged): `language, script, language_tag, sentiment, emotion, risk, risk_signal, risk_probability, risk_predictions[], model, inference_latency_ms, validated_for_language{}, safety{}`.
 
+## Research experiments (in progress)
+
+A research audit, a literature-backed experiment plan and a reproducible multi-seed experiment framework live in `reports/research_audit.md`, `reports/experiment_plan.md` and `reports/reproducibility.md`. GPU runs are driven by `notebooks/colab_experiments.ipynb`. **No results from that plan have been produced yet**; all numbers above are the original single-seed runs.
+
 ## Repository layout
 ```
 src/{config,preprocessing,langid,safety,privacy,explain,inference}.py

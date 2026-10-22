@@ -1,0 +1,38 @@
+{
+  "name": "E1_3_lr_grid",
+  "plan_id": "E1.3",
+  "description": "M1/H1b: encoder LR x head LR grid, longer budget (10 epochs, patience 3; Mosbach et al. 2021). 1 seed first; re-run the best 3 cells with seed 21. Validation only.",
+  "model_name": "google/muril-base-cased",
+  "tasks": [
+    "sentiment",
+    "emotion",
+    "risk"
+  ],
+  "seeds": [
+    13
+  ],
+  "evaluate_test": false,
+  "save_checkpoint": false,
+  "train": {
+    "epochs": 10,
+    "batch_size": 16,
+    "encoder_lr": 3e-05,
+    "head_lr": 0.0005,
+    "warmup_ratio": 0.06,
+    "weight_decay": 0.01,
+    "patience": 3,
+    "amp": true
+  },
+  "grid": {
+    "encoder_lr": [
+      1e-05,
+      2e-05,
+      3e-05
+    ],
+    "head_lr": [
+      5e-05,
+      0.0001,
+      0.0002
+    ]
+  }
+}

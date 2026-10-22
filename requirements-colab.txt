@@ -1,0 +1,26 @@
+# Exact versions used to build the frozen splits and run the reference experiments (Python 3.13).
+# torch is intentionally NOT pinned here: Colab ships a CUDA build of torch; the version actually used is recorded
+# per run in runs/<exp>/seed_*/env.json.
+# The data-processing packages (numpy, pandas, scikit-learn) are pinned because split construction depends on them;
+# `python scripts/freeze_splits.py --check` verifies the result.
+numpy==2.5.3
+pandas==3.0.5
+scikit-learn==1.9.1
+scipy==1.18.1
+pyarrow==25.0.1
+transformers==5.19.0
+tokenizers==0.23.2
+safetensors==0.8.0
+sentencepiece==0.2.2
+protobuf==7.36.1
+huggingface_hub==1.33.0
+datasets==5.1.0
+accelerate==1.15.0
+joblib==1.6.0
+lingua-language-detector==2.2.0
+matplotlib==3.11.2
+fastapi==0.142.2
+httpx==0.28.1
+python-multipart==0.0.32
+Jinja2==3.1.6
+pytest==9.1.1

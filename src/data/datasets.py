@@ -6,7 +6,8 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from src.config import EMOTION_LABELS, PROCESSED_DIR, TASK_LABELS
+from src.config import EMOTION_LABELS, PROCESSED_DIR, SPLITS_DIR, TASK_LABELS
+from src.data.splits import verify as verify_split
 
 
 @dataclass
@@ -33,12 +34,18 @@ class TaskData:
         return len(self.df)
 
 
+_VERIFIED: set[str] = set()
+
+
 def processed_available() -> bool:
     return all((PROCESSED_DIR / f"{t}.csv").exists() for t in TASK_LABELS)
 
 
 def load_task(task: str, split: str, limit: int | None = None, seed: int = 0) -> TaskData:
     df = pd.read_csv(PROCESSED_DIR / f"{task}.csv", keep_default_na=False)
+    if task not in _VERIFIED:
+        verify_split(task, df, SPLITS_DIR)  # raises SplitMismatchError on any drift
+        _VERIFIED.add(task)
     df = df[df.split == split].reset_index(drop=True)
     if limit and len(df) > limit:
         df = df.sample(n=limit, random_state=seed).reset_index(drop=True)

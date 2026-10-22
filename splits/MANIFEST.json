@@ -1,0 +1,29 @@
+{
+  "sentiment": {
+    "sha256": "88834e36057595b4d0dee84ff94b37e047b71e06e6600e3be47bfc5650087c25",
+    "n": 9188,
+    "by_split": {
+      "train": 5854,
+      "test": 2213,
+      "val": 1121
+    }
+  },
+  "emotion": {
+    "sha256": "34d96404dada16df0a393f44f6be8a24d3eafde31934c66b79df21e064bc07dc",
+    "n": 9271,
+    "by_split": {
+      "train": 4622,
+      "test": 3769,
+      "val": 880
+    }
+  },
+  "risk": {
+    "sha256": "956a6614fd062d414a66493b08d69d4f688a91aa529cf4c8cb78d12b8da9b1d4",
+    "n": 3531,
+    "by_split": {
+      "train": 2391,
+      "test": 715,
+      "val": 425
+    }
+  }
+}

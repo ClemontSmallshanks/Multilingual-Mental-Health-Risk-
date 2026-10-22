@@ -29,8 +29,9 @@ class TrainConfig:
     kind: str = "bilstm"
     epochs: int = 12
     batch_size: int = 32
-    lr: float = 2e-3                 # bilstm: all params; transformer: heads
+    lr: float = 2e-3                 # bilstm: all params
     encoder_lr: float = 3e-5         # transformer encoder
+    head_lr: float | None = None     # transformer heads; None = legacy lr * 0.5 (what all existing checkpoints used)
     weight_decay: float = 0.01
     warmup_ratio: float = 0.06
     grad_clip: float = 1.0
@@ -40,12 +41,27 @@ class TrainConfig:
     max_len: dict = field(default_factory=lambda: dict(MAX_LEN))
     device: str = "cpu"
     smoke: bool = False
+    truncation: dict = field(default_factory=dict)  # task -> "head" | "head_tail" (missing = "head")
+    head_tokens: int = 64                            # used by head_tail truncation
+    amp: bool = False                                # fp16 autocast on CUDA only
+    deterministic: bool = False
+    save_checkpoint: bool = True                     # False: keep best weights in memory only (experiment runs)
 
 
-def set_seed(seed: int) -> None:
+def set_seed(seed: int, deterministic: bool = False) -> None:
     random.seed(seed); np.random.seed(seed); torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
+    if deterministic:
+        import os
+
+        os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+        torch.backends.cudnn.benchmark = False
+        torch.use_deterministic_algorithms(True, warn_only=True)
+
+
+def encode_kwargs(cfg: "TrainConfig", task: str) -> dict:
+    return {"truncation": cfg.truncation.get(task, "head"), "head_tokens": cfg.head_tokens}
 
 
 def class_balance(train: dict[str, TaskData]) -> dict:
@@ -85,7 +101,7 @@ def evaluate_split(model, tok, data: dict[str, TaskData], cfg: TrainConfig, thre
     for task, d in data.items():
         if len(d) == 0:
             continue
-        lg = predict_logits(model, tok, d.texts, task, cfg.device, max_len=cfg.max_len[task])
+        lg = predict_logits(model, tok, d.texts, task, cfg.device, max_len=cfg.max_len[task], amp=cfg.amp, **encode_kwargs(cfg, task))
         y = d.labels
         probs = sigmoid(lg) if task == "emotion" else softmax(lg)
         mets[task] = compute_task_metrics(task, y, probs, None if thresholds is None else thresholds.get(task))
@@ -94,7 +110,7 @@ def evaluate_split(model, tok, data: dict[str, TaskData], cfg: TrainConfig, thre
 
 
 def train_multitask(model, tok, train: dict[str, TaskData], val: dict[str, TaskData], cfg: TrainConfig, out_dir, extra_meta=None) -> dict:
-    set_seed(cfg.seed)
+    set_seed(cfg.seed, cfg.deterministic)
     rng = random.Random(cfg.seed)
     dev = cfg.device
     model.to(dev)
@@ -105,7 +121,7 @@ def train_multitask(model, tok, train: dict[str, TaskData], val: dict[str, TaskD
     if cfg.kind == "transformer":
         enc_params = [p for n, p in model.named_parameters() if n.startswith("encoder.")]
         head_params = [p for n, p in model.named_parameters() if not n.startswith("encoder.")]
-        groups = [{"params": enc_params, "lr": cfg.encoder_lr}, {"params": head_params, "lr": cfg.lr * 0.5}]
+        groups = [{"params": enc_params, "lr": cfg.encoder_lr}, {"params": head_params, "lr": cfg.head_lr if cfg.head_lr is not None else cfg.lr * 0.5}]
     else:
         groups = [{"params": list(model.parameters()), "lr": cfg.lr}]
     opt = torch.optim.AdamW(groups, weight_decay=cfg.weight_decay)
@@ -115,9 +131,13 @@ def train_multitask(model, tok, train: dict[str, TaskData], val: dict[str, TaskD
     sched = torch.optim.lr_scheduler.LambdaLR(
         opt, lambda s: (s + 1) / warm if s < warm else max(0.0, (total - s) / max(1, total - warm)))
 
+    use_amp = cfg.amp and str(dev).startswith("cuda")
+    scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
+    best_state = None
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     hist, best, bad, step = [], -1.0, 0, 0
+    best_epoch = 0
     for ep in range(1, cfg.epochs + 1):
         model.train()
         t0 = time.time()
@@ -126,12 +146,14 @@ def train_multitask(model, tok, train: dict[str, TaskData], val: dict[str, TaskD
             d = train[task]
             texts = [d.texts[i] for i in idx]
             y = torch.tensor(d.labels[idx], device=dev)
-            enc = {k: v.to(dev) for k, v in tok.encode(texts, cfg.max_len[task]).items()}
-            logits = model(enc["input_ids"], enc["attention_mask"], task)
-            loss = task_loss(task, logits, y, class_weight=cw.get(task), pos_weight=pw if task == "emotion" else None)
-            (cfg.loss_weights.get(task, 1.0) * loss).backward()
+            enc = {k: v.to(dev) for k, v in tok.encode(texts, cfg.max_len[task], **encode_kwargs(cfg, task)).items()}
+            with torch.autocast(device_type="cuda", dtype=torch.float16, enabled=use_amp):
+                logits = model(enc["input_ids"], enc["attention_mask"], task)
+            loss = task_loss(task, logits.float(), y, class_weight=cw.get(task), pos_weight=pw if task == "emotion" else None)
+            scaler.scale(cfg.loss_weights.get(task, 1.0) * loss).backward()
+            scaler.unscale_(opt)
             torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_clip)
-            opt.step(); sched.step(); opt.zero_grad(set_to_none=True)
+            scaler.step(opt); scaler.update(); sched.step(); opt.zero_grad(set_to_none=True)
             sums[task] += loss.item() * len(idx); cnts[task] += len(idx); step += 1
         tr_loss = {t: sums[t] / max(1, cnts[t]) for t in train}
         total_train = sum(cfg.loss_weights.get(t, 1.0) * tr_loss[t] for t in tr_loss)
@@ -146,8 +168,12 @@ def train_multitask(model, tok, train: dict[str, TaskData], val: dict[str, TaskD
               f"val_macroF1={ {t: round(m['macro_f1'] or 0,4) for t,m in vm.items()} } mean={score:.4f}", flush=True)
         if score > best:
             best, bad = score, 0
-            save_checkpoint(out, model, tok, {"best_epoch": ep, "best_val_mean_macro_f1": score, "smoke": cfg.smoke,
-                                              "train_config": asdict(cfg), **(extra_meta or {})})
+            best_epoch = ep
+            if cfg.save_checkpoint:
+                save_checkpoint(out, model, tok, {"best_epoch": ep, "best_val_mean_macro_f1": score, "smoke": cfg.smoke,
+                                                  "train_config": asdict(cfg), **(extra_meta or {})})
+            else:
+                best_state = {k: v.detach().to("cpu", copy=True) for k, v in model.state_dict().items()}
         else:
             bad += 1
             if bad >= cfg.patience:
@@ -155,4 +181,6 @@ def train_multitask(model, tok, train: dict[str, TaskData], val: dict[str, TaskD
                 break
         (out / "history.json").write_text(json.dumps({"history": hist, "class_balance": bal, "best_val_mean_macro_f1": best}, indent=2))
     (out / "history.json").write_text(json.dumps({"history": hist, "class_balance": bal, "best_val_mean_macro_f1": best}, indent=2))
-    return {"history": hist, "best": best, "class_balance": bal}
+    if best_state is not None:  # restore the best-validation weights for evaluation
+        model.load_state_dict(best_state)
+    return {"history": hist, "best": best, "class_balance": bal, "best_epoch": best_epoch}
