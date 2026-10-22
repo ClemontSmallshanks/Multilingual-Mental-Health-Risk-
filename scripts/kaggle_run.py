@@ -1,7 +1,7 @@
 """Run experiment batches on a Kaggle GPU from this machine (no browser needed).
 
-Needs Kaggle API credentials in the environment: KAGGLE_USERNAME and KAGGLE_KEY
-(kaggle.com -> Settings -> API -> Create New Token). Never commit them.
+Needs Kaggle API credentials: KAGGLE_API_TOKEN or ~/.kaggle/access_token (or legacy KAGGLE_USERNAME/KAGGLE_KEY).
+kaggle.com -> Settings -> API -> Create New Token. Never commit them.
 
   python scripts/kaggle_run.py push  --batch r2 configs/R2_muril_multitask_baseline.json
   python scripts/kaggle_run.py status --batch r2
@@ -21,11 +21,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 
-def kernel_id(batch: str) -> str:
+def kaggle_user() -> str:
+    """Username from $KAGGLE_USERNAME, else from the CLI config (works with KAGGLE_API_TOKEN / ~/.kaggle/access_token)."""
     user = os.environ.get("KAGGLE_USERNAME")
-    if not user or not os.environ.get("KAGGLE_KEY"):
-        sys.exit("KAGGLE_USERNAME / KAGGLE_KEY are not set in this environment.")
-    return f"{user}/mhrisk-{batch}"
+    if user:
+        return user
+    out = subprocess.run(["kaggle", "config", "view"], capture_output=True, text=True).stdout
+    for line in out.splitlines():
+        if line.strip().startswith("- username:"):
+            u = line.split(":", 1)[1].strip()
+            if u and u != "None":
+                return u
+    sys.exit("No Kaggle credentials found (set KAGGLE_API_TOKEN, ~/.kaggle/access_token, or KAGGLE_USERNAME/KAGGLE_KEY).")
+
+
+def kernel_id(batch: str) -> str:
+    return f"{kaggle_user()}/mhrisk-{batch}"
 
 
 def push(batch: str, configs: list[str], commit: str | None) -> None:
