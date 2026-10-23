@@ -39,7 +39,7 @@ def kernel_id(batch: str) -> str:
     return f"{kaggle_user()}/mhrisk-{batch}"
 
 
-def push(batch: str, configs: list[str], commit: str | None) -> None:
+def push(batch: str, configs: list[str], commit: str | None, cpu: bool = False, seeds: list[int] | None = None) -> None:
     commit = commit or subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
     remote = subprocess.run(["git", "branch", "-r", "--contains", commit], cwd=ROOT, capture_output=True, text=True).stdout
     if not remote.strip():
@@ -47,18 +47,21 @@ def push(batch: str, configs: list[str], commit: str | None) -> None:
     for c in configs:
         if not (ROOT / c).exists():
             sys.exit(f"missing config {c}")
+    entries = [c + (" --seeds " + " ".join(map(str, seeds)) if seeds else "") for c in configs]
     src = (ROOT / "kaggle" / "kernel_template.py").read_text()
-    src = src.replace("__COMMIT__", commit).replace("__CONFIGS__", json.dumps(configs))
+    src = src.replace("__COMMIT__", commit).replace("__CONFIGS__", json.dumps(entries)).replace("__ALLOW_CPU__", str(cpu))
     d = Path(tempfile.mkdtemp(prefix="kaggle_"))
     (d / "run.py").write_text(src)
     kid = kernel_id(batch)
     meta = {"id": kid, "title": f"mhrisk-{batch}", "code_file": "run.py", "language": "python", "kernel_type": "script",
-            "is_private": "true", "enable_gpu": "true", "enable_internet": "true", "machine_shape": "NvidiaTeslaT4",
+            "is_private": "true", "enable_gpu": "false" if cpu else "true", "enable_internet": "true",
+            "machine_shape": "" if cpu else "NvidiaTeslaT4",
             "dataset_sources": [], "competition_sources": [], "kernel_sources": [], "model_sources": []}
     (d / "kernel-metadata.json").write_text(json.dumps(meta, indent=2))
-    subprocess.run(["kaggle", "kernels", "push", "-p", str(d), "--accelerator", "NvidiaTeslaT4"], check=True)
+    cmd = ["kaggle", "kernels", "push", "-p", str(d)] + ([] if cpu else ["--accelerator", "NvidiaTeslaT4"])
+    subprocess.run(cmd, check=True)
     shutil.rmtree(d, ignore_errors=True)
-    print(f"pushed {kid} @ {commit[:8]} with {len(configs)} config(s)")
+    print(f"pushed {kid} @ {commit[:8]} on {'CPU' if cpu else 'GPU'}: {entries}")
 
 
 def status(batch: str) -> None:
@@ -92,5 +95,7 @@ if __name__ == "__main__":
     ap.add_argument("--batch", required=True, help="short name, e.g. r2, e1, e3, e2, grid")
     ap.add_argument("configs", nargs="*")
     ap.add_argument("--commit", default=None)
+    ap.add_argument("--cpu", action="store_true", help="run on a Kaggle CPU machine (fp32; ~2 h per MuRIL multi-task seed)")
+    ap.add_argument("--seeds", nargs="*", type=int, default=None, help="override config seeds (e.g. one seed per kernel)")
     a = ap.parse_args()
-    {"push": lambda: push(a.batch, a.configs, a.commit), "status": lambda: status(a.batch), "fetch": lambda: fetch(a.batch)}[a.action]()
+    {"push": lambda: push(a.batch, a.configs, a.commit, a.cpu, a.seeds), "status": lambda: status(a.batch), "fetch": lambda: fetch(a.batch)}[a.action]()

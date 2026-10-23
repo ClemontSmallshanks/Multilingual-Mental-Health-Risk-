@@ -8,7 +8,8 @@ import sys
 import time
 
 COMMIT = "__COMMIT__"
-CONFIGS = json.loads('__CONFIGS__')
+CONFIGS = json.loads('__CONFIGS__')  # each entry: "configs/X.json [--seeds 13 21]"
+ALLOW_CPU = __ALLOW_CPU__
 REPO = "https://github.com/faizdevx/Multilingual-Mental-Health-Risk-.git"
 WORK = "/kaggle/working"
 os.environ["MHRISK_RUNS_DIR"] = f"{WORK}/runs"
@@ -28,7 +29,7 @@ import torch  # preinstalled in the Kaggle image
 
 print("torch", torch.__version__, "| cuda available:", torch.cuda.is_available(),
       "|", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "NO GPU", flush=True)
-if not torch.cuda.is_available():
+if not torch.cuda.is_available() and not ALLOW_CPU:
     sys.exit("No GPU attached to this kernel (account not phone-verified, GPU quota used up, or accelerator not granted). "
              "Refusing to run on CPU.")
 sh(f"git clone -q {REPO} /kaggle/repo && cd /kaggle/repo && git checkout -q {COMMIT} && git log --oneline -1")
@@ -39,7 +40,8 @@ sh("python scripts/prepare_data.py > /dev/null")
 sh("python scripts/freeze_splits.py --check")  # aborts the whole kernel if the split drifted
 status = {}
 for cfg in CONFIGS:
-    rc = sh(f"python scripts/run_experiment.py {cfg}", check=False)  # one failing config doesn't kill the rest
+    dev = "" if torch.cuda.is_available() else " --device cpu"
+    rc = sh(f"python scripts/run_experiment.py {cfg}{dev}", check=False)  # one failing config doesn't kill the rest
     status[cfg] = rc
 sh(f"python scripts/aggregate_runs.py --out {WORK}/results", check=False)
 json.dump({"commit": COMMIT, "configs": status, "minutes": round((time.time() - t0) / 60, 1)},
