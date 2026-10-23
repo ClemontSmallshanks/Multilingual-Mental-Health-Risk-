@@ -1,0 +1,24 @@
+{
+  "corpus_lines_scanned": 52933356,
+  "checked_texts": 1824,
+  "checked_by_split_source": {
+    "test|tweets-hindi": 733,
+    "test|youtube-hinglish": 416,
+    "val|tweets-hindi": 265,
+    "val|youtube-hinglish": 410
+  },
+  "exact_normalised_matches": 1,
+  "matched_by_split_source": {
+    "val|tweets-hindi": 1
+  },
+  "matched_text_ids": [
+    "sentiment-va-00579"
+  ],
+  "corpus": {
+    "name": "L3Cube-HingCorpus (Roman script), pre-training corpus of l3cube-pune/hing-roberta (Nayak & Joshi 2022)",
+    "source_used": "https://huggingface.co/datasets/hinglish-orthobench/HingCorpus (third-party re-upload; NOT verified identical to the original release)",
+    "note": "Line count 52,933,356 matches the 52.93M sentences reported in the paper."
+  },
+  "method": "Exact match after normalisation (NFKC, lower-case, URLs/@mentions/'#' removed, punctuation->space, whitespace collapsed); only texts with >= 5 words checked. Near-duplicates NOT checked.",
+  "date": "2026-10-23"
+}
