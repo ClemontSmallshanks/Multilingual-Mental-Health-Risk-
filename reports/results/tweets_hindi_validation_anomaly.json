@@ -1,0 +1,15 @@
+{
+  "finding": "On the tweets-hindi VALIDATION split (official UMSAB 'hindi' validation file, n=322 after dedup) every model scores near chance, much lower than on the same source's test split.",
+  "evidence_macro_f1": {
+    "tfidf_baseline": {"train": 0.802, "val": 0.361, "test": 0.488},
+    "tfidf_baseline_tweets_english_control": {"train": 0.947, "val": 0.527, "test": 0.509},
+    "muril_single_task_seed13": {"val": 0.354, "note": "accuracy; confusion matrix ~uniform"},
+    "hingroberta_single_task_seed13": {"val": 0.339, "note": "accuracy; confusion matrix ~uniform"},
+    "seed_averaged_val_macro_f1": {"muril": 0.351, "hingroberta": 0.342},
+    "seed_averaged_test_macro_f1": {"muril": 0.561, "hingroberta": 0.616}
+  },
+  "inconclusive_probe": "Training a char-TF-IDF model on the 322 validation rows vs on 322 random train rows gives the same near-chance test macro-F1 (0.341 vs 0.347): with so few rows this probe cannot separate label noise from a harder split.",
+  "status": "NOT VERIFIED. Possible causes: label/text misalignment in the source validation file, or a distribution shift. Needs manual inspection of a sample of validation tweets against their labels.",
+  "consequence": "Validation-based selection on Hinglish is effectively driven by the youtube-hinglish subset. Any tweets-hindi validation number should not be used for model selection until resolved.",
+  "date": "2026-10-23"
+}
