@@ -1,0 +1,85 @@
+{
+  "history": [
+    {
+      "epoch": 1,
+      "seconds": 757.0,
+      "train_loss": {
+        "risk": 0.6372842776979776,
+        "total_weighted": 0.6372842776979776
+      },
+      "val_loss": {
+        "risk": 0.5482800602912903,
+        "total_weighted": 0.5482800602912903
+      },
+      "val": {
+        "risk": {
+          "accuracy": 0.7388235294117647,
+          "macro_f1": 0.7235164835164836,
+          "weighted_f1": 0.7291800904977376,
+          "pr_auc": 0.8207107577571294
+        }
+      },
+      "val_mean_macro_f1": 0.7235164835164836,
+      "resumed_within_epoch": false
+    },
+    {
+      "epoch": 2,
+      "seconds": 769.4,
+      "train_loss": {
+        "risk": 0.43213737701482224,
+        "total_weighted": 0.43213737701482224
+      },
+      "val_loss": {
+        "risk": 0.4936204254627228,
+        "total_weighted": 0.4936204254627228
+      },
+      "val": {
+        "risk": {
+          "accuracy": 0.7788235294117647,
+          "macro_f1": 0.774477261437023,
+          "weighted_f1": 0.7772028871160982,
+          "pr_auc": 0.8856924984600758
+        }
+      },
+      "val_mean_macro_f1": 0.774477261437023,
+      "resumed_within_epoch": false
+    },
+    {
+      "epoch": 3,
+      "seconds": 718.0,
+      "train_loss": {
+        "risk": 0.28455498603934876,
+        "total_weighted": 0.28455498603934876
+      },
+      "val_loss": {
+        "risk": 0.5455500483512878,
+        "total_weighted": 0.5455500483512878
+      },
+      "val": {
+        "risk": {
+          "accuracy": 0.8,
+          "macro_f1": 0.796960448738485,
+          "weighted_f1": 0.7991232063668707,
+          "pr_auc": 0.8861080055956394
+        }
+      },
+      "val_mean_macro_f1": 0.796960448738485,
+      "resumed_within_epoch": false
+    }
+  ],
+  "class_balance": {
+    "risk": {
+      "strategy": "none (imbalance ratio <= 1.5; not justified)",
+      "counts": [
+        1140,
+        1251
+      ],
+      "imbalance_ratio": 1.097,
+      "class_weight": [
+        1.0,
+        1.0
+      ]
+    }
+  },
+  "best_val_mean_macro_f1": 0.796960448738485
+}
