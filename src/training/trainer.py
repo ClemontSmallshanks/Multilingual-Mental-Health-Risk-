@@ -7,6 +7,7 @@ Tracks per-task train/val loss + metrics, early-stops on mean validation macro-F
 from __future__ import annotations
 
 import json
+import os
 import random
 import time
 from dataclasses import asdict, dataclass, field
@@ -46,6 +47,7 @@ class TrainConfig:
     amp: bool = False                                # fp16 autocast on CUDA only
     deterministic: bool = False
     save_checkpoint: bool = True                     # False: keep best weights in memory only (experiment runs)
+    resume_every_s: int = 600                        # mid-epoch resume snapshot interval (when resume_path is given)
 
 
 def set_seed(seed: int, deterministic: bool = False) -> None:
@@ -109,7 +111,10 @@ def evaluate_split(model, tok, data: dict[str, TaskData], cfg: TrainConfig, thre
     return mets, losses
 
 
-def train_multitask(model, tok, train: dict[str, TaskData], val: dict[str, TaskData], cfg: TrainConfig, out_dir, extra_meta=None) -> dict:
+def train_multitask(model, tok, train: dict[str, TaskData], val: dict[str, TaskData], cfg: TrainConfig, out_dir, extra_meta=None,
+                    resume_path=None) -> dict:
+    """`resume_path`: if given, full training state is saved there every `cfg.resume_every_s` seconds and at each
+    epoch end, and training resumes from it after a crash/restart (at most ~resume_every_s of work is lost)."""
     set_seed(cfg.seed, cfg.deterministic)
     rng = random.Random(cfg.seed)
     dev = cfg.device
@@ -138,11 +143,41 @@ def train_multitask(model, tok, train: dict[str, TaskData], val: dict[str, TaskD
     out.mkdir(parents=True, exist_ok=True)
     hist, best, bad, step = [], -1.0, 0, 0
     best_epoch = 0
-    for ep in range(1, cfg.epochs + 1):
+    start_epoch, skip, epoch_rng = 1, 0, rng.getstate()
+    sums_init = cnts_init = None
+    resume = Path(resume_path) if resume_path else None
+    if resume is not None and resume.exists():
+        st = torch.load(resume, map_location="cpu", weights_only=False)
+        model.load_state_dict(st["model"]); opt.load_state_dict(st["opt"]); sched.load_state_dict(st["sched"])
+        scaler.load_state_dict(st["scaler"]); torch.set_rng_state(st["torch_rng"])
+        hist, best, bad, step, best_epoch, best_state = st["hist"], st["best"], st["bad"], st["step"], st["best_epoch"], st["best_state"]
+        start_epoch, skip, epoch_rng = st["epoch"], st["batch_idx"], st["epoch_rng"]
+        sums_init, cnts_init = st["sums"], st["cnts"]
+        rng.setstate(epoch_rng)
+        print(f"resumed from {resume.name}: epoch {start_epoch}, batch {skip}, step {step}", flush=True)
+        if st.get("finished"):
+            start_epoch = cfg.epochs + 1  # training had already ended (e.g. early stop) before the restart
+
+    def save_resume(epoch, batch_idx, sums, cnts, finished=False):
+        if resume is None:
+            return
+        tmp = resume.with_suffix(".tmp")
+        torch.save({"model": model.state_dict(), "opt": opt.state_dict(), "sched": sched.state_dict(), "scaler": scaler.state_dict(),
+                    "torch_rng": torch.get_rng_state(), "hist": hist, "best": best, "bad": bad, "step": step,
+                    "best_epoch": best_epoch, "best_state": best_state, "epoch": epoch, "batch_idx": batch_idx,
+                    "epoch_rng": epoch_rng, "sums": sums, "cnts": cnts, "finished": finished}, tmp)
+        os.replace(tmp, resume)  # atomic: a restart mid-write never leaves a corrupt resume file
+
+    last_save = time.time()
+    for ep in range(start_epoch, cfg.epochs + 1):
         model.train()
         t0 = time.time()
-        sums, cnts = {t: 0.0 for t in train}, {t: 0 for t in train}
-        for task, idx in _batches(train, cfg.batch_size, rng):
+        epoch_rng = rng.getstate()  # on resume, rng was already reset to the interrupted epoch's start state
+        sums = dict(sums_init) if (ep == start_epoch and sums_init is not None) else {t: 0.0 for t in train}
+        cnts = dict(cnts_init) if (ep == start_epoch and cnts_init is not None) else {t: 0 for t in train}
+        for bi, (task, idx) in enumerate(_batches(train, cfg.batch_size, rng)):
+            if ep == start_epoch and bi < skip:
+                continue  # already trained on before the restart
             d = train[task]
             texts = [d.texts[i] for i in idx]
             y = torch.tensor(d.labels[idx], device=dev)
@@ -155,6 +190,9 @@ def train_multitask(model, tok, train: dict[str, TaskData], val: dict[str, TaskD
             torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_clip)
             scaler.step(opt); scaler.update(); sched.step(); opt.zero_grad(set_to_none=True)
             sums[task] += loss.item() * len(idx); cnts[task] += len(idx); step += 1
+            if resume is not None and time.time() - last_save > cfg.resume_every_s:
+                save_resume(ep, bi + 1, sums, cnts)
+                last_save = time.time()
         tr_loss = {t: sums[t] / max(1, cnts[t]) for t in train}
         total_train = sum(cfg.loss_weights.get(t, 1.0) * tr_loss[t] for t in tr_loss)
         vm, vl = evaluate_split(model, tok, val, cfg)
@@ -162,10 +200,11 @@ def train_multitask(model, tok, train: dict[str, TaskData], val: dict[str, TaskD
         row = {"epoch": ep, "seconds": round(time.time() - t0, 1), "train_loss": {**tr_loss, "total_weighted": total_train},
                "val_loss": {**vl, "total_weighted": sum(cfg.loss_weights.get(t, 1.0) * v for t, v in vl.items())},
                "val": {t: {k: m.get(k) for k in ("accuracy", "macro_f1", "weighted_f1", "pr_auc")} for t, m in vm.items()},
-               "val_mean_macro_f1": score}
+               "val_mean_macro_f1": score, "resumed_within_epoch": bool(ep == start_epoch and skip > 0)}
         hist.append(row)
         print(f"[ep {ep}] {row['seconds']}s train_loss={ {k: round(v,4) for k,v in row['train_loss'].items()} } "
               f"val_macroF1={ {t: round(m['macro_f1'] or 0,4) for t,m in vm.items()} } mean={score:.4f}", flush=True)
+        stop = False
         if score > best:
             best, bad = score, 0
             best_epoch = ep
@@ -178,8 +217,13 @@ def train_multitask(model, tok, train: dict[str, TaskData], val: dict[str, TaskD
             bad += 1
             if bad >= cfg.patience:
                 print(f"early stopping at epoch {ep} (best mean val macro-F1 {best:.4f})", flush=True)
-                break
+                stop = True
         (out / "history.json").write_text(json.dumps({"history": hist, "class_balance": bal, "best_val_mean_macro_f1": best}, indent=2))
+        epoch_rng = rng.getstate()  # batch order of the next epoch is drawn from this state
+        save_resume(ep + 1, 0, None, None, finished=stop or ep == cfg.epochs)
+        last_save = time.time()
+        if stop:
+            break
     (out / "history.json").write_text(json.dumps({"history": hist, "class_balance": bal, "best_val_mean_macro_f1": best}, indent=2))
     if best_state is not None:  # restore the best-validation weights for evaluation
         model.load_state_dict(best_state)

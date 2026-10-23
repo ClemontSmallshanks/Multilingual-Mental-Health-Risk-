@@ -1,0 +1,26 @@
+{
+  "name": "C_ST_sentiment_hingroberta",
+  "plan_id": "E2.1",
+  "description": "Single-task HingRoBERTa sentiment (Nayak & Joshi 2022). Validation only; test only if selected on validation. CPU fp32, 3 seeds (compute-reduced protocol; see reports/results_summary.md).",
+  "model_name": "l3cube-pune/hing-roberta",
+  "tasks": [
+    "sentiment"
+  ],
+  "seeds": [
+    13,
+    21,
+    42
+  ],
+  "evaluate_test": false,
+  "save_checkpoint": true,
+  "train": {
+    "epochs": 3,
+    "batch_size": 16,
+    "encoder_lr": 3e-05,
+    "head_lr": 0.0005,
+    "warmup_ratio": 0.06,
+    "weight_decay": 0.01,
+    "patience": 2,
+    "amp": false
+  }
+}

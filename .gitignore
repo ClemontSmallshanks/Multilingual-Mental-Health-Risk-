@@ -29,3 +29,5 @@ logs/
 
 # experiment runs: metrics/predictions are small and may be committed deliberately; checkpoints never
 runs/**/checkpoint/
+runs/**/resume.pt
+runs/**/resume.tmp

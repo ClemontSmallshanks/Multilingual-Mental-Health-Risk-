@@ -1,0 +1,28 @@
+{
+  "name": "C_MT_muril",
+  "plan_id": "R2",
+  "description": "Multi-task MuRIL, original configuration. Pre-registered test (baseline for the ablation). CPU fp32, 3 seeds (compute-reduced protocol; see reports/results_summary.md).",
+  "model_name": "google/muril-base-cased",
+  "tasks": [
+    "sentiment",
+    "emotion",
+    "risk"
+  ],
+  "seeds": [
+    13,
+    21,
+    42
+  ],
+  "evaluate_test": true,
+  "save_checkpoint": false,
+  "train": {
+    "epochs": 3,
+    "batch_size": 16,
+    "encoder_lr": 3e-05,
+    "head_lr": 0.0005,
+    "warmup_ratio": 0.06,
+    "weight_decay": 0.01,
+    "patience": 2,
+    "amp": false
+  }
+}

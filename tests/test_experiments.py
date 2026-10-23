@@ -116,3 +116,35 @@ def test_emotion_bootstrap_reads_masked_labels(processed_dir, tmp_path, monkeypa
     assert d.y_disgust.dtype.kind == "i" and (d.y_disgust == -1).any()  # masked labels survive the round trip
     r = paired_bootstrap(runs, "E", "E", "val", "emotion", "macro_f1", n=10)
     assert r["diff_b_minus_a"] == 0.0 and r["n_valid_resamples"] > 0
+
+
+def test_training_resumes_after_interruption(processed_dir, tmp_path, tiny_transformer, monkeypatch):
+    """Simulate a machine restart mid-epoch: the second call must pick up from the snapshot and finish."""
+    import src.training.trainer as tr
+    from src.data.datasets import load_all
+
+    model, tok = tiny_transformer
+    cfg = tr.TrainConfig(kind="transformer", epochs=2, batch_size=4, patience=5, save_checkpoint=False, resume_every_s=0)
+    resume = tmp_path / "resume.pt"
+    calls = {"n": 0}
+    real = tr.task_loss
+
+    def crashing_loss(*a, **k):
+        calls["n"] += 1
+        if calls["n"] == 7:  # crash in the middle of epoch 1
+            raise KeyboardInterrupt
+        return real(*a, **k)
+
+    monkeypatch.setattr(tr, "task_loss", crashing_loss)
+    with pytest.raises(KeyboardInterrupt):
+        tr.train_multitask(model, tok, load_all("train"), load_all("val"), cfg, tmp_path / "o", resume_path=resume)
+    snap = __import__("torch").load(resume, weights_only=False)
+    assert snap["epoch"] == 1 and snap["batch_idx"] == 6 and snap["step"] == 6
+    monkeypatch.setattr(tr, "task_loss", real)
+    res = tr.train_multitask(model, tok, load_all("train"), load_all("val"), cfg, tmp_path / "o", resume_path=resume)
+    n_batches = sum(-(-len(d) // 4) for d in load_all("train").values())
+    assert len(res["history"]) == 2 and res["history"][0]["resumed_within_epoch"] is True
+    final = __import__("torch").load(resume, weights_only=False)
+    assert final["finished"] and final["step"] == 2 * n_batches  # no batch skipped or repeated
+    again = tr.train_multitask(model, tok, load_all("train"), load_all("val"), cfg, tmp_path / "o", resume_path=resume)
+    assert len(again["history"]) == 2  # already finished: nothing retrained

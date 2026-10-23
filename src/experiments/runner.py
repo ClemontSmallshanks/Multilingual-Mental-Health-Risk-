@@ -144,7 +144,7 @@ def run_one(cfg: dict, seed: int, device: str | None = None, evaluate_test: bool
     t0 = time.time()
     tmp = Path(tempfile.mkdtemp(prefix="run_"))
     try:
-        res = train_multitask(model, tok, train, val, tc, tmp)
+        res = train_multitask(model, tok, train, val, tc, tmp, resume_path=out / "resume.pt")
         shutil.copy(tmp / "history.json", out / "history.json")
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
@@ -171,6 +171,7 @@ def run_one(cfg: dict, seed: int, device: str | None = None, evaluate_test: bool
     if cfg.get("save_checkpoint"):
         save_checkpoint(out / "checkpoint", model, tok, {"train_config": asdict(tc), "name": cfg["name"], "best_epoch": res["best_epoch"]})
     (out / "metrics.json").write_text(json.dumps(metrics, indent=2, default=float))  # written last = run complete
+    (out / "resume.pt").unlink(missing_ok=True)
     print(f"done {cfg['name']} seed {seed}: train {train_s/60:.1f} min, best epoch {res['best_epoch']}, "
           f"val macro-F1 { {t: round(m['macro_f1'] or 0, 4) for t, m in val_m.items()} }", flush=True)
     del model
