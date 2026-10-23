@@ -31,3 +31,4 @@ logs/
 runs/**/checkpoint/
 runs/**/resume.pt
 runs/**/resume.tmp
+data/annotation/

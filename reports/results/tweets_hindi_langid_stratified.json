@@ -1,0 +1,38 @@
+{
+  "n_tweets_hindi_test": 866,
+  "langid_distribution": {
+    "hi-Latn": 642,
+    "en-Latn": 223,
+    "tr-Latn": 1
+  },
+  "by_model": {
+    "C_ST_sentiment_muril": {
+      "hi-Latn": {
+        "n": 642,
+        "macro_f1_mean": 0.5344043287970015,
+        "macro_f1_sd": 0.008449087132882845,
+        "seeds": 3
+      },
+      "en-Latn": {
+        "n": 223,
+        "macro_f1_mean": 0.641743975559988,
+        "macro_f1_sd": 0.010018780808920408,
+        "seeds": 3
+      }
+    },
+    "C_ST_sentiment_hingroberta": {
+      "hi-Latn": {
+        "n": 642,
+        "macro_f1_mean": 0.5958237734502578,
+        "macro_f1_sd": 0.04359965117577213,
+        "seeds": 3
+      },
+      "en-Latn": {
+        "n": 223,
+        "macro_f1_mean": 0.6763894643138388,
+        "macro_f1_sd": 0.0058037617377626645,
+        "seeds": 3
+      }
+    }
+  }
+}
