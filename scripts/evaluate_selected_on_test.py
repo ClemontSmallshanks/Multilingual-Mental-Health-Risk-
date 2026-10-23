@@ -3,7 +3,7 @@
 Used only for configurations chosen on validation (experiment_plan.md Sec. 7, "best of ... on val").
 Loads each seed's saved checkpoint (no retraining), applies the calibration fitted on validation during the run,
 writes predictions_test_<task>.csv and adds "test" + "test_evaluated_after_selection" to metrics.json.
-Refuses to run twice.
+Never evaluates a run twice (already-evaluated seeds are skipped, so it is safe to re-run after an interruption).
 
   python scripts/evaluate_selected_on_test.py C_ST_risk_headtail256 --reason "beat C_ST_risk_head128 on val PR-AUC"
 """
@@ -28,7 +28,8 @@ if __name__ == "__main__":
         mf = sd / "metrics.json"
         m = json.loads(mf.read_text())
         if m.get("test") is not None:
-            sys.exit(f"{sd} already has test metrics; refusing to evaluate the test set twice.")
+            print(f"{sd.name}: already has test metrics; not re-evaluating (test is evaluated once per run)")
+            continue
         cfg = json.loads((sd / "config.json").read_text())
         tc = TrainConfig(**{k: v for k, v in cfg["resolved_train_config"].items()})
         tc.device = "cpu"
