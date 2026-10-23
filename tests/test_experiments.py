@@ -148,3 +148,26 @@ def test_training_resumes_after_interruption(processed_dir, tmp_path, tiny_trans
     assert final["finished"] and final["step"] == 2 * n_batches  # no batch skipped or repeated
     again = tr.train_multitask(model, tok, load_all("train"), load_all("val"), cfg, tmp_path / "o", resume_path=resume)
     assert len(again["history"]) == 2  # already finished: nothing retrained
+
+
+def test_same_seed_gives_identical_head_init(processed_dir, tmp_path, monkeypatch, tiny_transformer):
+    """Regression: heads used to be initialised before seeding, so 'seed 13' differed between processes."""
+    import torch
+    from src.experiments import runner
+    from src.models.multitask import MultiTaskTransformer
+    from transformers import BertConfig, BertModel
+
+    tok = tiny_transformer[1]
+    inits = []
+
+    def build(cfg):
+        enc = BertModel(BertConfig(vocab_size=len(tok.tok), hidden_size=32, num_hidden_layers=1, num_attention_heads=2, intermediate_size=64))
+        m = MultiTaskTransformer(enc, "tiny", shared_dim=16, tasks=("risk",))
+        inits.append(m.heads["risk"].weight.detach().clone())
+        return m, tok
+
+    for i in range(2):
+        torch.manual_seed(1000 + i)  # simulate different global RNG state in different processes
+        monkeypatch.setenv("MHRISK_RUNS_DIR", str(tmp_path / f"r{i}"))
+        runner.run_one(_cfg("S", ["risk"]), 7, "cpu", build=build)
+    assert torch.equal(inits[0], inits[1])

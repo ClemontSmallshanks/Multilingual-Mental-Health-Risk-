@@ -37,7 +37,7 @@ from src.models.tokenization import HFTokenizer
 from src.training.calibration import fit_temperature, sigmoid
 from src.training.metrics import compute_task_metrics, tune_emotion_thresholds
 from src.training.predict import predict_logits
-from src.training.trainer import TrainConfig, encode_kwargs, train_multitask
+from src.training.trainer import TrainConfig, encode_kwargs, set_seed, train_multitask
 
 TRAIN_KEYS = {f for f in TrainConfig.__dataclass_fields__} - {"kind", "seed", "device", "smoke"}
 
@@ -134,6 +134,7 @@ def run_one(cfg: dict, seed: int, device: str | None = None, evaluate_test: bool
     (out / "env.json").write_text(json.dumps(capture(ROOT), indent=2))
 
     train, val = load_all("train", limit, tasks, seed), load_all("val", limit, tasks, seed)
+    set_seed(seed)  # BEFORE building the model: task-head initialisation must depend on the seed
     if build is not None:
         model, tok = build(cfg)
     else:
