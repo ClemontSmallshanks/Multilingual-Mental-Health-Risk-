@@ -1,0 +1,87 @@
+{
+  "history": [
+    {
+      "epoch": 1,
+      "seconds": 1320.8,
+      "train_loss": {
+        "sentiment": 0.8964870642955938,
+        "total_weighted": 0.8964870642955938
+      },
+      "val_loss": {
+        "sentiment": 0.7997295260429382,
+        "total_weighted": 0.7997295260429382
+      },
+      "val": {
+        "sentiment": {
+          "accuracy": 0.6244424620874219,
+          "macro_f1": 0.6236711015810751,
+          "weighted_f1": 0.6244880295462475,
+          "pr_auc": null
+        }
+      },
+      "val_mean_macro_f1": 0.6236711015810751,
+      "resumed_within_epoch": false
+    },
+    {
+      "epoch": 2,
+      "seconds": 1595.6,
+      "train_loss": {
+        "sentiment": 0.655089750463416,
+        "total_weighted": 0.655089750463416
+      },
+      "val_loss": {
+        "sentiment": 0.8843230605125427,
+        "total_weighted": 0.8843230605125427
+      },
+      "val": {
+        "sentiment": {
+          "accuracy": 0.6244424620874219,
+          "macro_f1": 0.622271653795428,
+          "weighted_f1": 0.6224738041038919,
+          "pr_auc": null
+        }
+      },
+      "val_mean_macro_f1": 0.622271653795428,
+      "resumed_within_epoch": false
+    },
+    {
+      "epoch": 3,
+      "seconds": 1657.8,
+      "train_loss": {
+        "sentiment": 0.46619992544107725,
+        "total_weighted": 0.46619992544107725
+      },
+      "val_loss": {
+        "sentiment": 0.9629554152488708,
+        "total_weighted": 0.9629554152488708
+      },
+      "val": {
+        "sentiment": {
+          "accuracy": 0.6137377341659233,
+          "macro_f1": 0.6118821503619613,
+          "weighted_f1": 0.6129739824555583,
+          "pr_auc": null
+        }
+      },
+      "val_mean_macro_f1": 0.6118821503619613,
+      "resumed_within_epoch": false
+    }
+  ],
+  "class_balance": {
+    "sentiment": {
+      "strategy": "none (imbalance ratio <= 1.5; not justified)",
+      "counts": [
+        2381,
+        1691,
+        1782
+      ],
+      "imbalance_ratio": 1.408,
+      "class_weight": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  },
+  "best_val_mean_macro_f1": 0.6236711015810751
+}
