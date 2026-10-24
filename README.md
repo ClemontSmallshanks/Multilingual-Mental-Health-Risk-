@@ -174,7 +174,7 @@ Response (abridged): `language, script, language_tag, sentiment, emotion, risk, 
 
 ## Research upgrade: multi-seed, pre-registered experiments
 
-Full write-up: [`reports/results_summary.md`](reports/results_summary.md) · audit: [`reports/research_audit.md`](reports/research_audit.md) · plan with verified literature: [`reports/experiment_plan.md`](reports/experiment_plan.md) · errors: [`reports/error_analysis.md`](reports/error_analysis.md) · reproducibility: [`reports/reproducibility.md`](reports/reproducibility.md) · paper outline: [`paper/outline.md`](paper/outline.md).
+**Conclusion and comparison with published research: [`reports/conclusion.md`](reports/conclusion.md)** · full write-up: [`reports/results_summary.md`](reports/results_summary.md) · audit: [`reports/research_audit.md`](reports/research_audit.md) · plan with verified literature: [`reports/experiment_plan.md`](reports/experiment_plan.md) · errors: [`reports/error_analysis.md`](reports/error_analysis.md) · reproducibility: [`reports/reproducibility.md`](reports/reproducibility.md) · paper outline: [`paper/outline.md`](paper/outline.md).
 
 Test results, mean over 3 seeds, CPU fp32, paired bootstrap 95 % CIs:
 

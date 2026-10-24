@@ -41,6 +41,9 @@ Dreaddit (English stress), UMSAB English + "hindi" tweets, Hinglish YouTube comm
 ## 6. Analysis
 ✅ Confusion shift on Hinglish (MuRIL over-predicts negative; HingRoBERTa fixes non-negative→negative errors). ✅ Within-source language gap. ❌ Manual error taxonomy (needs a human annotator; tooling ready). ❌ Normalisation / transliteration (not implemented).
 
+## 6b. Comparison with published results and conclusion
+✅ Written up in [`reports/conclusion.md`](../reports/conclusion.md): stress on par with Dreaddit BERT-base (F1 0.798 vs 0.8065, same test set); Hinglish pre-training gain replicates Nayak & Joshi (2022) (+5.6 vs their +4.86); UMSAB Hindi tweets above published XLM-Twitter (0.616 vs 56.39, different training mix); emotion below SemEval-2025 RoBERTa baselines.
+
 ## 7. Limitations
 3 seeds; CPU 3-epoch budget, no LR search; English-only stress; small/noisy Hinglish data and suspicious validation split; exact-match contamination check on a re-uploaded corpus; single annotator data; stress ≠ clinical status.
 
