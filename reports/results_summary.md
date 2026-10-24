@@ -12,6 +12,7 @@
 |---|---|---|
 | Seeds for final comparisons | 5 | **3 (13, 21, 42)** |
 | Stress experiments (M1) | multi-task | **single-task stress models** (≈¼ of the cost) + multi-task baseline |
+| Faithfulness test (E4.4) | English vs Hinglish | as planned, comprehensiveness only (no sufficiency), 60 examples per group |
 | LR grid (E1.3) | 9 cells × 10 epochs | **not run** (≈60 CPU-hours) |
 | XLM-R control (E2.2) | 2 seeds | **not run** |
 | Transliteration / normalisation (E2.3, E2.4) | val comparison | **not implemented** |
@@ -58,7 +59,7 @@ Hinglish-specific pre-training (HingRoBERTa; Nayak & Joshi, 2022) vs MuRIL, both
 | PR-AUC | 0.883 | 0.876 | −0.006 [−0.017, +0.005] |
 | ROC-AUC | 0.868 | 0.859 | −0.009 [−0.019, +0.001] |
 
-Head truncation to 256 tokens (E1.1, separates "longer input" from "head+tail"): **PENDING — still running at the time of writing; see `results_tables.md` once complete.** Per protocol, neither 256-token variant was evaluated on test.
+Head truncation to 256 tokens (E1.1, separates "longer input" from "head+tail"): macro-F1 0.785 vs 0.792, Δ −0.007 [−0.024, +0.010]; PR-AUC 0.883 vs 0.883, Δ −0.000 [−0.011, +0.011]. **Longer inputs do not help**, with or without head+tail. Per protocol, neither 256-token variant was evaluated on test.
 
 **Multi-task vs single-task (pre-registered test comparison):**
 
@@ -104,7 +105,15 @@ Low confidence means *the model is uncertain about the text*. It says nothing ab
 
 ## 7. Explanation faithfulness (Integrated Gradients)
 
-**PENDING — runs after the training queue finishes; results will be in `reports/results/faithfulness.json`.**
+Deletion test on the explanations the app serves (original multi-task MuRIL checkpoint; IG, 16 steps, zero baseline; delete k = ⌈20 %⌉ of content tokens; validation examples; `reports/results/faithfulness.json`). Drop in the predicted class's probability:
+
+| Group | n | top-k deleted | random-k | bottom-k | top − random [95 % CI] | examples with top > random |
+|---|---|---|---|---|---|---|
+| English stress | 60 | 0.360 | 0.056 | −0.062 | **+0.305 [+0.222, +0.386]** | 92 % |
+| English sentiment | 60 | 0.251 | 0.097 | −0.000 | **+0.155 [+0.090, +0.224]** | 68 % |
+| Hinglish sentiment | 59 | 0.151 | 0.078 | 0.045 | +0.074 [+0.023, +0.125] | 58 % |
+
+The IG highlights are **faithful for English stress**, moderately faithful for English sentiment, and **only weakly faithful for Hinglish**: for 42 % of Hinglish examples, deleting the "most important" tokens hurts no more than deleting random ones. The app's explanation caveat now states this. These are deletion-based comprehensiveness scores on 60 examples per group; sufficiency was not measured.
 
 ## 8. Limitations
 

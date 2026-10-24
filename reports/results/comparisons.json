@@ -124,24 +124,66 @@
     "status": "ok"
   },
   {
-    "id": "M1",
     "a": "C_ST_risk_head128",
     "b": "C_ST_risk_head256",
     "split": "val",
     "task": "risk",
-    "metric": "macro_f1",
     "scope": "all",
-    "status": "NOT RUN (missing runs)"
+    "metric": "macro_f1",
+    "seeds_a": [
+      13,
+      21,
+      42
+    ],
+    "seeds_b": [
+      13,
+      21,
+      42
+    ],
+    "n_examples": 425,
+    "mean_a": 0.7917812137547453,
+    "mean_b": 0.7849423476494192,
+    "diff_b_minus_a": -0.006838866105326136,
+    "ci95": [
+      -0.02393986909564843,
+      0.01006855806064544
+    ],
+    "ci_excludes_zero": false,
+    "n_resamples": 1000,
+    "n_valid_resamples": 1000,
+    "id": "M1",
+    "status": "ok"
   },
   {
-    "id": "M1",
     "a": "C_ST_risk_head128",
     "b": "C_ST_risk_head256",
     "split": "val",
     "task": "risk",
-    "metric": "pr_auc",
     "scope": "all",
-    "status": "NOT RUN (missing runs)"
+    "metric": "pr_auc",
+    "seeds_a": [
+      13,
+      21,
+      42
+    ],
+    "seeds_b": [
+      13,
+      21,
+      42
+    ],
+    "n_examples": 425,
+    "mean_a": 0.8826541060938086,
+    "mean_b": 0.8825417848984095,
+    "diff_b_minus_a": -0.0001123211953990566,
+    "ci95": [
+      -0.010840932348315421,
+      0.011403865355237816
+    ],
+    "ci_excludes_zero": false,
+    "n_resamples": 1000,
+    "n_valid_resamples": 1000,
+    "id": "M1",
+    "status": "ok"
   },
   {
     "a": "C_ST_sentiment_muril",

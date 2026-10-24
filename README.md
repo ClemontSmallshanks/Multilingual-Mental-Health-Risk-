@@ -185,6 +185,8 @@ Test results, mean over 3 seeds, CPU fp32, paired bootstrap 95 % CIs:
 | Multi-task sharing | no measurable benefit on any task; negative transfer on stress ranking |
 | Head+tail truncation for long posts (Sun et al., 2019) | did **not** help (validation macro-F1 −0.020 [−0.037, −0.003]) |
 | Selective prediction (threshold chosen on validation) | stress macro-F1 0.783 → 0.828 while answering 83 % of inputs |
+| Explanation faithfulness (IG deletion test) | faithful for English stress; only weakly faithful for Hinglish (58 % of examples) |
+| Longer stress inputs (256 tokens, head or head+tail) | no gain on validation |
 
 Not run (compute): LR grid, XLM-R control, transliteration/normalisation. Manual error taxonomy needs a human annotator. These are listed in `results_summary.md` §0. The served app still uses the original multi-task checkpoint; the numbers in the sections above are the original single-seed runs.
 

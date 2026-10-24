@@ -12,7 +12,8 @@ Status legend: ✅ measured (number from `runs/`) · ⏳ running/pending · ❌ 
   2. ✅ Hinglish-specific pre-training (HingRoBERTa) improves Hinglish sentiment macro-F1 by +0.056 [+0.032, +0.079] on test with no English loss, closing 27 % of the gap; contamination check included.
   3. ✅ A controlled single- vs multi-task ablation: no task benefits from sharing; stress PR-AUC suffers negative transfer (−0.023 [−0.038, −0.008]).
   4. ✅ Negative result: head+tail truncation for long Reddit posts does not help.
-  5. ✅ Data findings: a near-chance validation split in a widely used Hindi tweet benchmark config; Romanized and ~26 % English content in the "hindi" config.
+  5. ✅ Integrated-Gradients explanations are much less faithful for Hinglish than for English.
+  6. ✅ Data findings: a near-chance validation split in a widely used Hindi tweet benchmark config; Romanized and ~26 % English content in the "hindi" config.
 * Ethics framing: stress *language* screening, not diagnosis (Chancellor & De Choudhury, 2020; Benton et al., 2017; Harrigian et al., 2020).
 
 ## 2. Related work
@@ -32,10 +33,10 @@ Dreaddit (English stress), UMSAB English + "hindi" tweets, Hinglish YouTube comm
 * Table 1 ✅ headline test results (`reports/results_summary.md` §1).
 * Table 2 ✅ HingRoBERTa vs MuRIL by language and source (§2).
 * Table 3 ✅ multi- vs single-task ablation (§4).
-* Table 4 ✅ truncation (validation) (§3); ⏳ head-256 variant.
+* Table 4 ✅ truncation (validation): head+tail-256 and head-256 both no better than 128 (§3).
 * Figure 1 ✅ risk–coverage curves (`reports/figures/risk_coverage.png`).
 * Table 5 ✅ language-ID-stratified tweets-hindi analysis (`error_analysis.md` §3).
-* Table 6 ⏳ IG faithfulness (deletion test).
+* Table 6 ✅ IG faithfulness: faithful for English stress (+0.305 [+0.222, +0.386]), weak for Hinglish sentiment (+0.074 [+0.023, +0.125], 58 % of examples) (§7).
 
 ## 6. Analysis
 ✅ Confusion shift on Hinglish (MuRIL over-predicts negative; HingRoBERTa fixes non-negative→negative errors). ✅ Within-source language gap. ❌ Manual error taxonomy (needs a human annotator; tooling ready). ❌ Normalisation / transliteration (not implemented).

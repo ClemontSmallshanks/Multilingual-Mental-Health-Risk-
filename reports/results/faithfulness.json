@@ -1,0 +1,42 @@
+{
+  "checkpoint": "checkpoints/transformer",
+  "method": "IG (16 steps, zero baseline) on input embeddings; deletion of k=ceil(20%) content tokens",
+  "groups": {
+    "risk:en-Latn": {
+      "n": 60,
+      "mean_drop_top_k": 0.3603073552250862,
+      "mean_drop_random_k": 0.055570063491662346,
+      "mean_drop_bottom_k": -0.06208081642786662,
+      "top_minus_random": 0.3047372917334238,
+      "ci95": [
+        0.22195321862647932,
+        0.38641474829365813
+      ],
+      "share_examples_top_gt_random": 0.9166666666666666
+    },
+    "sentiment:en-Latn": {
+      "n": 60,
+      "mean_drop_top_k": 0.2514409273862839,
+      "mean_drop_random_k": 0.09691787401835124,
+      "mean_drop_bottom_k": -0.00022890220085779826,
+      "top_minus_random": 0.15452305336793265,
+      "ci95": [
+        0.0897337530553341,
+        0.22418626139561326
+      ],
+      "share_examples_top_gt_random": 0.6833333333333333
+    },
+    "sentiment:hi-Latn": {
+      "n": 59,
+      "mean_drop_top_k": 0.15131532413474583,
+      "mean_drop_random_k": 0.07772071260516927,
+      "mean_drop_bottom_k": 0.04493039694883055,
+      "top_minus_random": 0.07359461152957657,
+      "ci95": [
+        0.02276312673495988,
+        0.12514458084257976
+      ],
+      "share_examples_top_gt_random": 0.576271186440678
+    }
+  }
+}

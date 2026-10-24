@@ -54,6 +54,14 @@
 | C_ST_risk_head128 | val | risk | precision | 0.790 | 0.018 | 3 |
 | C_ST_risk_head128 | val | risk | recall | 0.850 | 0.002 | 3 |
 | C_ST_risk_head128 | val | risk | roc_auc | 0.868 | 0.005 | 3 |
+| C_ST_risk_head256 | val | risk | brier | 0.308 | 0.005 | 3 |
+| C_ST_risk_head256 | val | risk | ece | 0.045 | 0.013 | 3 |
+| C_ST_risk_head256 | val | risk | f1 | 0.803 | 0.017 | 3 |
+| C_ST_risk_head256 | val | risk | macro_f1 | 0.785 | 0.003 | 3 |
+| C_ST_risk_head256 | val | risk | pr_auc | 0.883 | 0.010 | 3 |
+| C_ST_risk_head256 | val | risk | precision | 0.812 | 0.052 | 3 |
+| C_ST_risk_head256 | val | risk | recall | 0.801 | 0.079 | 3 |
+| C_ST_risk_head256 | val | risk | roc_auc | 0.868 | 0.003 | 3 |
 | C_ST_risk_headtail256 | val | risk | brier | 0.317 | 0.029 | 3 |
 | C_ST_risk_headtail256 | val | risk | ece | 0.069 | 0.009 | 3 |
 | C_ST_risk_headtail256 | val | risk | f1 | 0.805 | 0.016 | 3 |
@@ -113,6 +121,8 @@
 | C_ST_risk_head128 | test | risk | source:dreaddit | 0.783 | 0.007 | 3 |
 | C_ST_risk_head128 | val | risk | language:en-Latn | 0.792 | 0.014 | 3 |
 | C_ST_risk_head128 | val | risk | source:dreaddit | 0.792 | 0.014 | 3 |
+| C_ST_risk_head256 | val | risk | language:en-Latn | 0.785 | 0.003 | 3 |
+| C_ST_risk_head256 | val | risk | source:dreaddit | 0.785 | 0.003 | 3 |
 | C_ST_risk_headtail256 | val | risk | language:en-Latn | 0.772 | 0.019 | 3 |
 | C_ST_risk_headtail256 | val | risk | source:dreaddit | 0.772 | 0.019 | 3 |
 | C_ST_sentiment_hingroberta | test | sentiment | language:en-Latn | 0.704 | 0.009 | 3 |
@@ -144,8 +154,8 @@
 | M1 | val | risk | pr_auc | all | C_ST_risk_head128 | C_ST_risk_headtail256 | 0.883 | 0.876 | -0.006 | [-0.017, +0.005] | no |
 | M1 | val | risk | roc_auc | all | C_ST_risk_head128 | C_ST_risk_headtail256 | 0.868 | 0.859 | -0.009 | [-0.019, +0.001] | no |
 | M1 | val | risk | f1 | all | C_ST_risk_head128 | C_ST_risk_headtail256 | 0.819 | 0.805 | -0.014 | [-0.029, +0.000] | no |
-| M1 | val | risk | macro_f1 | all | C_ST_risk_head128 | C_ST_risk_head256 | - | - | - | - | NOT RUN (missing runs) |
-| M1 | val | risk | pr_auc | all | C_ST_risk_head128 | C_ST_risk_head256 | - | - | - | - | NOT RUN (missing runs) |
+| M1 | val | risk | macro_f1 | all | C_ST_risk_head128 | C_ST_risk_head256 | 0.792 | 0.785 | -0.007 | [-0.024, +0.010] | no |
+| M1 | val | risk | pr_auc | all | C_ST_risk_head128 | C_ST_risk_head256 | 0.883 | 0.883 | -0.000 | [-0.011, +0.011] | no |
 | M2 | val | sentiment | macro_f1 | all | C_ST_sentiment_muril | C_ST_sentiment_hingroberta | 0.568 | 0.629 | +0.061 | [+0.038, +0.083] | yes |
 | M2 | val | sentiment | macro_f1 | language:hi-Latn | C_ST_sentiment_muril | C_ST_sentiment_hingroberta | 0.523 | 0.600 | +0.078 | [+0.052, +0.107] | yes |
 | M2 | val | sentiment | macro_f1 | language:en-Latn | C_ST_sentiment_muril | C_ST_sentiment_hingroberta | 0.679 | 0.693 | +0.014 | [-0.024, +0.053] | no |

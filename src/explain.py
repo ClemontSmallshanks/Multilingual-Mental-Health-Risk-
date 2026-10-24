@@ -11,7 +11,9 @@ import torch
 from src.config import MAX_LEN, TASK_LABELS
 
 CAVEAT = ("Model attribution (Integrated Gradients): shows which tokens influenced this model's score for the target class. "
-          "It is not clinical reasoning and does not indicate that any condition is present. Attributions can be noisy.")
+          "It is not clinical reasoning and does not indicate that any condition is present. Attributions can be noisy: "
+          "in a deletion test they were clearly faithful for English stress, but only weakly faithful for Hinglish text "
+          "(reports/results_summary.md, Sec. 7).")
 
 
 def _clean(tok: str) -> str:
