@@ -1,0 +1,124 @@
+{
+ "C_ST_sentiment_muril": {
+  "by_length": {
+   "long(40+)": {
+    "n": 23,
+    "error_rate": 0.435
+   },
+   "medium(8-39)": {
+    "n": 1707,
+    "error_rate": 0.372
+   },
+   "short(<8)": {
+    "n": 483,
+    "error_rate": 0.433
+   }
+  },
+  "by_language": {
+   "en-Latn": {
+    "n": 870,
+    "error_rate": 0.309
+   },
+   "hi-Latn": {
+    "n": 1343,
+    "error_rate": 0.436
+   }
+  },
+  "confusion_seed_avg_hiLatn": {
+   "neg": {
+    "neg": 281,
+    "neu": 127,
+    "pos": 131
+   },
+   "neu": {
+    "neg": 88,
+    "neu": 195,
+    "pos": 104
+   },
+   "pos": {
+    "neg": 49,
+    "neu": 86,
+    "pos": 282
+   }
+  }
+ },
+ "C_ST_sentiment_hingroberta": {
+  "by_length": {
+   "long(40+)": {
+    "n": 23,
+    "error_rate": 0.478
+   },
+   "medium(8-39)": {
+    "n": 1707,
+    "error_rate": 0.323
+   },
+   "short(<8)": {
+    "n": 483,
+    "error_rate": 0.371
+   }
+  },
+  "by_language": {
+   "en-Latn": {
+    "n": 870,
+    "error_rate": 0.282
+   },
+   "hi-Latn": {
+    "n": 1343,
+    "error_rate": 0.37
+   }
+  },
+  "confusion_seed_avg_hiLatn": {
+   "neg": {
+    "neg": 278,
+    "neu": 80,
+    "pos": 97
+   },
+   "neu": {
+    "neg": 86,
+    "neu": 241,
+    "pos": 93
+   },
+   "pos": {
+    "neg": 54,
+    "neu": 87,
+    "pos": 327
+   }
+  }
+ },
+ "C_ST_risk_head128": {
+  "by_length": {
+   "long(40+)": {
+    "n": 693,
+    "error_rate": 0.211
+   },
+   "medium(8-39)": {
+    "n": 22,
+    "error_rate": 0.136
+   }
+  },
+  "by_language": {
+   "en-Latn": {
+    "n": 715,
+    "error_rate": 0.208
+   }
+  }
+ },
+ "C_MT_muril": {
+  "by_length": {
+   "long(40+)": {
+    "n": 693,
+    "error_rate": 0.218
+   },
+   "medium(8-39)": {
+    "n": 22,
+    "error_rate": 0.182
+   }
+  },
+  "by_language": {
+   "en-Latn": {
+    "n": 715,
+    "error_rate": 0.217
+   }
+  }
+ }
+}
