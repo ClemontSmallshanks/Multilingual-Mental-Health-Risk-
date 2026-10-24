@@ -2,6 +2,8 @@
 
 *Date: 2026-10-22. Scope: repository at commit `3588dd7`. No code, data split or model was changed for this audit.*
 
+> **Follow-up status (2026-10-24):** A1 → 3 seeds (5 not feasible on CPU) · A2/A4 → not tuned (LR grid not run) · A3 → tested, head+tail did not help · A5 → fixed (per-label vs exact-set rates) · A6 → per-language/per-source reporting everywhere · A7 → open · A8 → done (single- vs multi-task ablation) · A9 → deletion test run (`results_summary.md` §7) · A10 → bootstrap now covers all tasks incl. emotion. Frozen splits, pinned packages, per-run environment capture and resumable training were added. See `results_summary.md`.
+
 Everything below was checked directly against the code, the processed data, the checkpoints and the committed predictions. Where a statement is an inference rather than a measurement, it is labelled **(inference)**.
 
 ---

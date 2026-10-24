@@ -1,6 +1,6 @@
 # Experiment plan: literature-backed upgrade
 
-*Status (updated 2026-10-22): Stage 2 framework implemented (`configs/`, `scripts/run_experiment.py`, `scripts/aggregate_runs.py`, `notebooks/colab_experiments.ipynb`; see `reproducibility.md`). **No experiment below has been run yet.** No numbers in this file are results. Baseline numbers quoted are the existing single-seed MuRIL results from `reports/metrics/` (seed 13), verified in `research_audit.md`.*
+*Status (updated 2026-10-24): experiments were run under a **compute-reduced CPU protocol** (3 seeds, single-task stress models, configs in `configs/cpu/`). Results and every deviation from this plan are in **`results_summary.md` §0**. Status per row: ✅ run · ❌ not run (reason in results_summary). This file itself contains no results. Baseline numbers quoted are the existing single-seed MuRIL results from `reports/metrics/` (seed 13), verified in `research_audit.md`.*
 
 ## 0. Research question
 
@@ -52,10 +52,10 @@ R2 becomes **the** baseline for every later comparison. The existing single-seed
 
 | ID | Variant (only one factor changes vs R2) | Selection |
 |---|---|---|
-| E1.1 | `max_len_risk=256` (head truncation) | val |
-| E1.2 | head+tail truncation (first 64 + last 190 tokens of a 256 budget, i.e. Sun et al.'s ~25 % head ratio) | val |
-| E1.3 | Grid: encoder LR ∈ {1e-5, 2e-5, 3e-5} × head LR ∈ {5e-5, 1e-4, 2e-4} (9 cells), 2 seeds, up to 10 epochs (Mosbach-style longer budget), early stop on val macro-F1 with patience 3 **and** report val loss | val |
-| E1.4 | Best of E1.1–E1.3 combined, × 5 seeds → test once | **final** |
+| E1.1 ✅ (single-task) | `max_len_risk=256` (head truncation) | val |
+| E1.2 ✅ (single-task; rejected on val) | head+tail truncation (first 64 + last 190 tokens of a 256 budget, i.e. Sun et al.'s ~25 % head ratio) | val |
+| E1.3 ❌ (CPU cost) | Grid: encoder LR ∈ {1e-5, 2e-5, 3e-5} × head LR ∈ {5e-5, 1e-4, 2e-4} (9 cells), 2 seeds, up to 10 epochs (Mosbach-style longer budget), early stop on val macro-F1 with patience 3 **and** report val loss | val |
+| E1.4 ❌ (no variant beat baseline on val) | Best of E1.1–E1.3 combined, × 5 seeds → test once | **final** |
 
 *Cost:* E1.1–E1.2 ~4 h CPU (1 seed each); E1.3 is 18 runs. On CPU that is impractical, so it should be **run on a GPU, or reduced to 3 cells chosen a priori** (current, {2e-5, 1e-4}, {1e-5, 5e-5}).
 
@@ -75,10 +75,10 @@ The existing gap (0.696 vs 0.557) confounds language with platform, annotator an
 
 | ID | Intervention | Literature basis | Notes / risks |
 |---|---|---|---|
-| E2.1 | **Hinglish-specific encoder**: `l3cube-pune/hing-roberta` (CC-BY-4.0) single-task sentiment | Nayak & Joshi (2022) pre-trained HingBERT/HingMBERT/HingRoBERTa on L3Cube-HingCorpus (52.93 M Roman-script Hindi-English sentences scraped from Twitter) and evaluated them on GLUECoS tasks including code-mixed sentiment | Different tokenizer; same splits/labels. The pre-training corpus is Twitter-derived, so overlap with our `tweets-hindi` test texts is possible. Masked-LM pre-training on test text is a contamination risk, so the overlap check is mandatory |
-| E2.2 | **XLM-R base** (MIT) single-task | Conneau et al. (2020); used as code-switching baseline in GLUECoS (Khanuja et al., 2020) | Controls for "MuRIL vs any multilingual encoder" |
-| E2.3 *(not yet implemented)* | **Transliteration to Devanagari** of hi-Latn input (IndicXlit / Aksharantar models, `ai4bharat-transliteration`), then MuRIL | Madhani et al. (2022) (Aksharantar); Roark et al. (2020) (Dakshina) document romanisation variability; MuRIL was pre-trained with transliterated data (Khanuja et al., 2021) | English words in code-mixed text may be wrongly transliterated. Variants: (a) all tokens, (b) only tokens the language-ID marks Hindi. Original text kept; transformation logged. Choice made on **val** only |
-| E2.4 *(not yet implemented)* | **Conservative spelling normalisation** (lower-case, character-repeat squashing "sooo"→"soo", fixed mapping list built from **train/val only**) | Motivated by romanisation variability [Roark 2020]; a deliberately weak baseline for E2.3 | Mapping list frozen before test evaluation |
+| E2.1 ✅ (selected on val, confirmed on test) | **Hinglish-specific encoder**: `l3cube-pune/hing-roberta` (CC-BY-4.0) single-task sentiment | Nayak & Joshi (2022) pre-trained HingBERT/HingMBERT/HingRoBERTa on L3Cube-HingCorpus (52.93 M Roman-script Hindi-English sentences scraped from Twitter) and evaluated them on GLUECoS tasks including code-mixed sentiment | Different tokenizer; same splits/labels. The pre-training corpus is Twitter-derived, so overlap with our `tweets-hindi` test texts is possible. Masked-LM pre-training on test text is a contamination risk, so the overlap check is mandatory |
+| E2.2 ❌ (CPU cost) | **XLM-R base** (MIT) single-task | Conneau et al. (2020); used as code-switching baseline in GLUECoS (Khanuja et al., 2020) | Controls for "MuRIL vs any multilingual encoder" |
+| E2.3 ❌ not implemented | **Transliteration to Devanagari** of hi-Latn input (IndicXlit / Aksharantar models, `ai4bharat-transliteration`), then MuRIL | Madhani et al. (2022) (Aksharantar); Roark et al. (2020) (Dakshina) document romanisation variability; MuRIL was pre-trained with transliterated data (Khanuja et al., 2021) | English words in code-mixed text may be wrongly transliterated. Variants: (a) all tokens, (b) only tokens the language-ID marks Hindi. Original text kept; transformation logged. Choice made on **val** only |
+| E2.4 ❌ not implemented | **Conservative spelling normalisation** (lower-case, character-repeat squashing "sooo"→"soo", fixed mapping list built from **train/val only**) | Motivated by romanisation variability [Roark 2020]; a deliberately weak baseline for E2.3 | Mapping list frozen before test evaluation |
 
 *Selection rule:* the single best variant on val goes to a 5-seed test evaluation. The others are reported with val numbers only, to avoid test reuse.
 
@@ -92,8 +92,8 @@ Hand-annotate 200 **validation** errors (not test) with a written schema: spelli
 
 | ID | Setup | Basis |
 |---|---|---|
-| E3.1 | MuRIL single-task × 3 tasks (same splits, same tuned LR/epochs, same seeds) vs R2 multi-task | MT-DNN (Liu et al., 2019) reports gains from multi-task fine-tuning on GLUE. Pruksachatkun et al. (2020) studied 110 intermediate→target task pairs and found the benefit depends strongly on the pairing, so transfer between our three unrelated datasets cannot be assumed to be positive |
-| E3.2 *(only if E3.1 shows negative transfer)* | Gradient-conflict mitigation (PCGrad) or loss re-weighting | Yu et al. (2020) |
+| E3.1 ✅ (3 seeds, test) | MuRIL single-task × 3 tasks (same splits, same tuned LR/epochs, same seeds) vs R2 multi-task | MT-DNN (Liu et al., 2019) reports gains from multi-task fine-tuning on GLUE. Pruksachatkun et al. (2020) studied 110 intermediate→target task pairs and found the benefit depends strongly on the pairing, so transfer between our three unrelated datasets cannot be assumed to be positive |
+| E3.2 ❌ (warranted by stress PR-AUC result; future work) | Gradient-conflict mitigation (PCGrad) or loss re-weighting | Yu et al. (2020) |
 
 Report per-task Δ (single − multi) with paired CIs. Negative transfer will be reported as a finding.
 
@@ -103,10 +103,10 @@ Report per-task Δ (single − multi) with paired CIs. Negative transfer will be
 
 | ID | Experiment | Basis |
 |---|---|---|
-| E4.1 | Calibration: temperature scaling fitted on a **separate calibration half of val** (fixes audit A7); reliability diagrams; ECE/Brier per task and per language | Guo et al. (2017); Desai & Durrett (2020) studied calibration of pre-trained transformers in- and out-of-domain |
-| E4.2 | Selective prediction: risk–coverage curves using max-softmax confidence; abstention threshold chosen on val for a target coverage | Geifman & El-Yaniv (2017); Hendrycks & Gimpel (2017) max-softmax baseline |
-| E4.3 | OOD probe: confidence on texts from a task's *other* datasets (e.g. sentiment head on Dreaddit), reported as a distribution-shift check, not accuracy | Hendrycks & Gimpel (2017); Harrigian et al. (2020) show mental-health models generalise poorly across datasets |
-| E4.4 | IG faithfulness: delete top-k vs random-k vs bottom-k tokens and measure the drop in predicted probability (comprehensiveness) and the probability kept with only the top-k tokens (sufficiency), English vs Hinglish | Sundararajan et al. (2017); DeYoung et al. (2020) (ERASER metrics); Jacovi & Goldberg (2020) on faithfulness vs plausibility |
+| E4.1 ✅ partial (temperature on full val; ECE/Brier reported) | Calibration: temperature scaling fitted on a **separate calibration half of val** (fixes audit A7); reliability diagrams; ECE/Brier per task and per language | Guo et al. (2017); Desai & Durrett (2020) studied calibration of pre-trained transformers in- and out-of-domain |
+| E4.2 ✅ | Selective prediction: risk–coverage curves using max-softmax confidence; abstention threshold chosen on val for a target coverage | Geifman & El-Yaniv (2017); Hendrycks & Gimpel (2017) max-softmax baseline |
+| E4.3 ❌ | OOD probe: confidence on texts from a task's *other* datasets (e.g. sentiment head on Dreaddit), reported as a distribution-shift check, not accuracy | Hendrycks & Gimpel (2017); Harrigian et al. (2020) show mental-health models generalise poorly across datasets |
+| E4.4 ✅ (see results_summary §7) | IG faithfulness: delete top-k vs random-k vs bottom-k tokens and measure the drop in predicted probability (comprehensiveness) and the probability kept with only the top-k tokens (sufficiency), English vs Hinglish | Sundararajan et al. (2017); DeYoung et al. (2020) (ERASER metrics); Jacovi & Goldberg (2020) on faithfulness vs plausibility |
 
 If IG fails the deletion test (top-k drop not greater than random-k), the UI label is changed from "model attribution" to "gradient heat-map (not validated as faithful)".
 

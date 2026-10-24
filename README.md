@@ -172,9 +172,21 @@ UI: / /analyze /playground /models /languages /errors /batch /health-ui /about
 ```
 Response (abridged): `language, script, language_tag, sentiment, emotion, risk, risk_signal, risk_probability, risk_predictions[], model, inference_latency_ms, validated_for_language{}, safety{}`.
 
-## Research experiments (in progress)
+## Research upgrade: multi-seed, pre-registered experiments
 
-A research audit, a literature-backed experiment plan and a reproducible multi-seed experiment framework live in `reports/research_audit.md`, `reports/experiment_plan.md` and `reports/reproducibility.md`. GPU runs are driven by `notebooks/colab_experiments.ipynb`. **No results from that plan have been produced yet**; all numbers above are the original single-seed runs.
+Full write-up: [`reports/results_summary.md`](reports/results_summary.md) · audit: [`reports/research_audit.md`](reports/research_audit.md) · plan with verified literature: [`reports/experiment_plan.md`](reports/experiment_plan.md) · errors: [`reports/error_analysis.md`](reports/error_analysis.md) · reproducibility: [`reports/reproducibility.md`](reports/reproducibility.md) · paper outline: [`paper/outline.md`](paper/outline.md).
+
+Test results, mean over 3 seeds, CPU fp32, paired bootstrap 95 % CIs:
+
+| Finding | Result |
+|---|---|
+| **Hinglish sentiment** (major improvement 1): HingRoBERTa vs MuRIL | macro-F1 on `hi-Latn` **0.556 → 0.611, +0.056 [+0.032, +0.079]**; English unchanged (+0.020 [−0.002, +0.044]); English–Hinglish gap −27 % |
+| **Stress detection** (major improvement 2): single-task vs multi-task MuRIL | PR-AUC **0.852 → 0.875, +0.023 [+0.008, +0.038]**; F1 unchanged; calibration worse (ECE 0.035 → 0.062) |
+| Multi-task sharing | no measurable benefit on any task; negative transfer on stress ranking |
+| Head+tail truncation for long posts (Sun et al., 2019) | did **not** help (validation macro-F1 −0.020 [−0.037, −0.003]) |
+| Selective prediction (threshold chosen on validation) | stress macro-F1 0.783 → 0.828 while answering 83 % of inputs |
+
+Not run (compute): LR grid, XLM-R control, transliteration/normalisation. Manual error taxonomy needs a human annotator. These are listed in `results_summary.md` §0. The served app still uses the original multi-task checkpoint; the numbers in the sections above are the original single-seed runs.
 
 ## Repository layout
 ```

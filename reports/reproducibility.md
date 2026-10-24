@@ -1,6 +1,28 @@
 # Reproducibility
 
-*Status (2026-10-22): the framework below is implemented and tested (66 unit tests; end-to-end dry run with the real MuRIL and HingRoBERTa checkpoints on a 24-example subset). **No Stage 2/3 experiment has been run yet.** Existing results in `reports/metrics/` are the original single-seed CPU runs.*
+*Status (2026-10-24): all reported experiments were run with this framework on a 4-core CPU (fp32), configs in `configs/cpu/`, artefacts in `runs/` (committed: config, env, history, metrics, per-example probabilities; no text, no checkpoints). Results: `results_summary.md`. `reports/metrics/` still holds the original single-seed October runs.*
+
+## Reproducing the reported results
+
+```bash
+python scripts/download_data.py && python scripts/prepare_data.py && python scripts/freeze_splits.py --check
+scripts/run_cpu_queue.sh                                   # resumable; ~24 CPU-hours on 4 cores
+python scripts/evaluate_selected_on_test.py C_ST_sentiment_hingroberta --reason "<validation evidence>"
+python scripts/write_results_tables.py                     # tables + paired bootstrap -> reports/results/
+python scripts/reliability_analysis.py                     # selective prediction
+python scripts/faithfulness_test.py                        # IG deletion test
+python -m pytest -q
+```
+
+Verified: multi-task seed 13 reproduces the original October run exactly (identical validation metrics per epoch).
+
+## Robustness to machine restarts
+
+Training saves a full snapshot (`runs/<exp>/seed_<n>/resume.pt`: weights, optimizer, scheduler, RNG states, position within the epoch, best weights) every 10 minutes and at every epoch end, written atomically. A restarted run resumes from it, so no batch is skipped or repeated (unit-tested). The snapshot is deleted when the run completes and is git-ignored. Caveats: dropout randomness after a resume differs from an uninterrupted run, and `train_minutes` in `metrics.json` counts only the final process.
+
+## Fixed during the experiments
+
+* Task heads were initialised *before* the seed was set in the experiment runner, so "seed 13" differed between processes. Fixed (seed set before model construction) and regression-tested; the affected partial run was discarded and restarted.
 
 ## What makes a result reproducible here
 
