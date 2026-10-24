@@ -190,6 +190,45 @@ Test results, mean over 3 seeds, CPU fp32, paired bootstrap 95 % CIs:
 
 Not run (compute): LR grid, XLM-R control, transliteration/normalisation. Manual error taxonomy needs a human annotator. These are listed in `results_summary.md` §0. The served app still uses the original multi-task checkpoint; the numbers in the sections above are the original single-seed runs.
 
+## Conclusion: what was improved, compared with published research
+
+*Test sets, mean over 3 seeds, paired-bootstrap 95 % CIs. Published numbers were read from each paper's own result table and are context, not head-to-head comparisons, unless the test set is the same. Full version: [`reports/conclusion.md`](reports/conclusion.md).*
+
+### What we improved
+
+| # | Improvement | Before → after | Research basis |
+|---|---|---|---|
+| 1 | **Hinglish sentiment**: Hinglish-pre-trained encoder (HingRoBERTa) instead of MuRIL | `hi-Latn` macro-F1 **0.556 → 0.611** (+0.056 [+0.032, +0.079]); English unchanged; English–Hinglish gap −27 %; no test-set overlap with its pre-training corpus | Nayak & Joshi (2022); Khanuja et al. (2020) |
+| 2 | **Stress detection**: dedicated single-task model instead of a shared multi-task model | PR-AUC **0.852 → 0.875** (+0.023 [+0.008, +0.038]); F1 unchanged; calibration worse (ECE 0.035 → 0.062) | Pruksachatkun et al. (2020); Liu et al. (2019) |
+| 3 | **Reliability**: abstain on low-confidence inputs (threshold chosen on validation) | stress macro-F1 0.783 → **0.828** at 83 % coverage | Geifman & El-Yaniv (2017); Hendrycks & Gimpel (2017) |
+| 4 | **Reproducibility**: 3 seeds, frozen splits, pinned packages, pre-registered test use | original run reproduced exactly | Dodge et al. (2020); Dror et al. (2018) |
+
+Not improved (reported, not hidden): longer stress inputs (head+tail truncation, Sun et al. 2019: worse on validation); multi-task sharing (no gain on any task); emotion (below published baselines); explanations (faithful for English stress, weak for Hinglish).
+
+### Comparison with published results
+
+| Task | Published (source) | Ours | Reading |
+|---|---|---|---|
+| Stress, Dreaddit (same 715-post test set) | BERT-base F1 0.8065 (Turcan & McKeown 2019, Table 6) | F1 0.798 | **On par** with the original paper |
+| Gain from Hinglish pre-training | +4.86 F1 over XLM-R on GLUECoS (Nayak & Joshi 2022) | +5.6 macro-F1 over MuRIL | **Effect replicated** on independent data |
+| Romanized-Hindi tweets, UMSAB | XLM-Twitter 56.39 (Barbieri et al. 2022, Table 7) | HingRoBERTa 0.616 | About **5 points higher**; different training mix, so indicative only |
+| English tweets, UMSAB | XLM-Twitter 70.63 (same table) | 0.704 | **On par** |
+| Emotion, BRIGHTER English / Hindi | RoBERTa baseline 0.708 / 0.855 (SemEval-2025 Task 11, Table 2) | 0.639 / 0.770 | **Below** published baselines; future work |
+
+### Agreement with the literature
+
+| Prior claim | Our result |
+|---|---|
+| Pre-training data matters for code-mixed text (Nayak & Joshi 2022) | **Confirmed** |
+| Multi-task benefit depends on the task pairing (Pruksachatkun et al. 2020) | **Consistent**: no positive transfer, and negative transfer on stress |
+| Head+tail truncation helps long documents (Sun et al. 2019) | **Not reproduced** for Reddit posts |
+| Seed variance is large (Dodge et al. 2020; Mosbach et al. 2021) | **Confirmed**: s.d. up to 0.044 |
+| Explanations must be tested (Jacovi & Goldberg 2020; DeYoung et al. 2020) | Faithfulness turned out to be **language-dependent** |
+
+### Research paper
+
+Draft: [`paper/outline.md`](paper/outline.md). Working title: *"Closing the Romanized-Hindi Gap: Pre-training Data, Not Multi-Task Sharing, Drives Multilingual Sentiment and Stress-Language Classification."* All 35 references were verified against arXiv / ACL Anthology / Crossref ([`reports/experiment_plan.md`](reports/experiment_plan.md)).
+
 ## Repository layout
 ```
 src/{config,preprocessing,langid,safety,privacy,explain,inference}.py
