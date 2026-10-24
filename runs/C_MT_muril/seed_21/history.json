@@ -1,0 +1,174 @@
+{
+  "history": [
+    {
+      "epoch": 1,
+      "seconds": 2624.0,
+      "train_loss": {
+        "sentiment": 1.0632768636438925,
+        "emotion": 0.6726394840671304,
+        "risk": 0.6357954469299476,
+        "total_weighted": 2.3717117946409703
+      },
+      "val_loss": {
+        "sentiment": 1.0325695276260376,
+        "emotion": 0.441147118806839,
+        "risk": 0.5774787664413452,
+        "total_weighted": 2.051195412874222
+      },
+      "val": {
+        "sentiment": {
+          "accuracy": 0.4469223907225691,
+          "macro_f1": 0.41435506920486526,
+          "weighted_f1": 0.412731616903704,
+          "pr_auc": null
+        },
+        "emotion": {
+          "accuracy": null,
+          "macro_f1": 0.5862563520455731,
+          "weighted_f1": 0.6176180874264029,
+          "pr_auc": null
+        },
+        "risk": {
+          "accuracy": 0.7129411764705882,
+          "macro_f1": 0.7111999821762767,
+          "weighted_f1": 0.7092477340281091,
+          "pr_auc": 0.8525929635962197
+        }
+      },
+      "val_mean_macro_f1": 0.5706038011422384,
+      "resumed_within_epoch": false
+    },
+    {
+      "epoch": 2,
+      "seconds": 2678.1,
+      "train_loss": {
+        "sentiment": 0.9092351792410123,
+        "emotion": 0.44025021551595217,
+        "risk": 0.4146709866426022,
+        "total_weighted": 1.7641563813995667
+      },
+      "val_loss": {
+        "sentiment": 0.9176434874534607,
+        "emotion": 0.35141345858573914,
+        "risk": 0.515988290309906,
+        "total_weighted": 1.7850452363491058
+      },
+      "val": {
+        "sentiment": {
+          "accuracy": 0.568242640499554,
+          "macro_f1": 0.5678633048626763,
+          "weighted_f1": 0.5697688204030641,
+          "pr_auc": null
+        },
+        "emotion": {
+          "accuracy": null,
+          "macro_f1": 0.6799712319425285,
+          "weighted_f1": 0.702769994487486,
+          "pr_auc": null
+        },
+        "risk": {
+          "accuracy": 0.7717647058823529,
+          "macro_f1": 0.7642251313990929,
+          "weighted_f1": 0.7678957137133116,
+          "pr_auc": 0.8583353783533284
+        }
+      },
+      "val_mean_macro_f1": 0.6706865560680993,
+      "resumed_within_epoch": false
+    },
+    {
+      "epoch": 3,
+      "seconds": 2379.8,
+      "train_loss": {
+        "sentiment": 0.7224768411392314,
+        "emotion": 0.3293886908020926,
+        "risk": 0.26482668702246404,
+        "total_weighted": 1.316692218963788
+      },
+      "val_loss": {
+        "sentiment": 1.0151454210281372,
+        "emotion": 0.34142011404037476,
+        "risk": 0.5693846344947815,
+        "total_weighted": 1.9259501695632935
+      },
+      "val": {
+        "sentiment": {
+          "accuracy": 0.5495093666369313,
+          "macro_f1": 0.5468530378162014,
+          "weighted_f1": 0.5478088540307162,
+          "pr_auc": null
+        },
+        "emotion": {
+          "accuracy": null,
+          "macro_f1": 0.6886785529431078,
+          "weighted_f1": 0.7094751867430772,
+          "pr_auc": null
+        },
+        "risk": {
+          "accuracy": 0.7576470588235295,
+          "macro_f1": 0.7530477657239889,
+          "weighted_f1": 0.7559817975288682,
+          "pr_auc": 0.8639180923932744
+        }
+      },
+      "val_mean_macro_f1": 0.6628597854944327,
+      "resumed_within_epoch": false
+    }
+  ],
+  "class_balance": {
+    "sentiment": {
+      "strategy": "none (imbalance ratio <= 1.5; not justified)",
+      "counts": [
+        2381,
+        1691,
+        1782
+      ],
+      "imbalance_ratio": 1.408,
+      "class_weight": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "emotion": {
+      "strategy": "BCE with pos_weight = clip(sqrt(neg/pos), 1, 5), computed per label over annotated rows only",
+      "positives": [
+        654,
+        228,
+        1730,
+        965,
+        1159,
+        968
+      ],
+      "negatives": [
+        3968,
+        2015,
+        2892,
+        3657,
+        3463,
+        3654
+      ],
+      "pos_weight": [
+        2.463,
+        2.973,
+        1.293,
+        1.947,
+        1.729,
+        1.943
+      ]
+    },
+    "risk": {
+      "strategy": "none (imbalance ratio <= 1.5; not justified)",
+      "counts": [
+        1140,
+        1251
+      ],
+      "imbalance_ratio": 1.097,
+      "class_weight": [
+        1.0,
+        1.0
+      ]
+    }
+  },
+  "best_val_mean_macro_f1": 0.6706865560680993
+}
