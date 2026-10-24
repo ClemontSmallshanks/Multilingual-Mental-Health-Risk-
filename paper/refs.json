@@ -1,0 +1,238 @@
+{
+ "turcan": {
+  "authors": "E. Turcan and K. McKeown",
+  "n": 2,
+  "pages": "97 to 107",
+  "year": "2019"
+ },
+ "barbieri": {
+  "authors": "F. Barbieri, L. Espinosa Anke, and J. Camacho-Collados",
+  "n": 3,
+  "pages": "258 to 266",
+  "year": "2022"
+ },
+ "conneau": {
+  "authors": "A. Conneau et al.",
+  "n": 10,
+  "pages": "8440 to 8451",
+  "year": "2020"
+ },
+ "khanuja_cs": {
+  "authors": "S. Khanuja, S. Dandapat, A. Srinivasan, S. Sitaram, and M. Choudhury",
+  "n": 5,
+  "pages": "3575 to 3585",
+  "year": "2020"
+ },
+ "liu": {
+  "authors": "X. Liu, P. He, W. Chen, and J. Gao",
+  "n": 4,
+  "pages": "4487 to 4496",
+  "year": "2019"
+ },
+ "pruk": {
+  "authors": "Y. Pruksachatkun et al.",
+  "n": 9,
+  "pages": "5231 to 5247",
+  "year": "2020"
+ },
+ "deyoung": {
+  "authors": "J. DeYoung et al.",
+  "n": 7,
+  "pages": "4443 to 4458",
+  "year": "2020"
+ },
+ "jacovi": {
+  "authors": "A. Jacovi and Y. Goldberg",
+  "n": 2,
+  "pages": "4198 to 4205",
+  "year": "2020"
+ },
+ "desai": {
+  "authors": "S. Desai and G. Durrett",
+  "n": 2,
+  "pages": "295 to 302",
+  "year": "2020"
+ },
+ "bergk": {
+  "authors": "T. Berg-Kirkpatrick, D. Burkett, and D. Klein",
+  "n": 3,
+  "pages": "995 to 1005",
+  "year": "2012"
+ },
+ "dror": {
+  "authors": "R. Dror, G. Baumer, S. Shlomov, and R. Reichart",
+  "n": 4,
+  "pages": "1383 to 1392",
+  "year": "2018"
+ },
+ "harrigian": {
+  "authors": "K. Harrigian, C. Aguirre, and M. Dredze",
+  "n": 3,
+  "pages": "3774 to 3788",
+  "year": "2020"
+ },
+ "benton": {
+  "authors": "A. Benton, G. Coppersmith, and M. Dredze",
+  "n": 3,
+  "pages": "94 to 102",
+  "year": "2017"
+ },
+ "patwa": {
+  "authors": "P. Patwa et al.",
+  "n": 9,
+  "pages": "774 to 790",
+  "year": "2020"
+ },
+ "muril": {
+  "authors": "S. Khanuja et al.",
+  "n": 14,
+  "title": "MuRIL: Multilingual Representations for Indian Languages",
+  "arxiv": "2103.10730",
+  "year": "2021"
+ },
+ "hingbert": {
+  "authors": "R. Nayak and R. Joshi",
+  "n": 2,
+  "title": "L3Cube-HingCorpus and HingBERT: A Code Mixed Hindi-English Dataset and BERT Language Models",
+  "arxiv": "2204.08398",
+  "year": "2022"
+ },
+ "brighter": {
+  "authors": "S. H. Muhammad et al.",
+  "n": 48,
+  "title": "BRIGHTER: BRIdging the Gap in Human-Annotated Textual Emotion Recognition Datasets for 28 Languages",
+  "arxiv": "2502.11926",
+  "year": "2025"
+ },
+ "semeval25": {
+  "authors": "S. H. Muhammad et al.",
+  "n": 21,
+  "title": "SemEval-2025 Task 11: Bridging the Gap in Text-Based Emotion Detection",
+  "arxiv": "2503.07269",
+  "year": "2025"
+ },
+ "yu": {
+  "authors": "T. Yu, S. Kumar, A. Gupta, S. Levine, K. Hausman, and C. Finn",
+  "n": 6,
+  "title": "Gradient Surgery for Multi-Task Learning",
+  "arxiv": "2001.06782",
+  "year": "2020"
+ },
+ "dodge": {
+  "authors": "J. Dodge, G. Ilharco, R. Schwartz, A. Farhadi, H. Hajishirzi, and N. Smith",
+  "n": 6,
+  "title": "Fine-Tuning Pretrained Language Models: Weight Initializations, Data Orders, and Early Stopping",
+  "arxiv": "2002.06305",
+  "year": "2020"
+ },
+ "mosbach": {
+  "authors": "M. Mosbach, M. Andriushchenko, and D. Klakow",
+  "n": 3,
+  "title": "On the Stability of Fine-tuning BERT: Misconceptions, Explanations, and Strong Baselines",
+  "arxiv": "2006.04884",
+  "year": "2020"
+ },
+ "sun": {
+  "authors": "C. Sun, X. Qiu, Y. Xu, and X. Huang",
+  "n": 4,
+  "title": "How to Fine-Tune BERT for Text Classification?",
+  "arxiv": "1905.05583",
+  "year": "2019"
+ },
+ "guo": {
+  "authors": "C. Guo, G. Pleiss, Y. Sun, and K. Q. Weinberger",
+  "n": 4,
+  "title": "On Calibration of Modern Neural Networks",
+  "arxiv": "1706.04599",
+  "year": "2017"
+ },
+ "geifman": {
+  "authors": "Y. Geifman and R. El-Yaniv",
+  "n": 2,
+  "title": "Selective Classification for Deep Neural Networks",
+  "arxiv": "1705.08500",
+  "year": "2017"
+ },
+ "hendrycks": {
+  "authors": "D. Hendrycks and K. Gimpel",
+  "n": 2,
+  "title": "A Baseline for Detecting Misclassified and Out-of-Distribution Examples in Neural Networks",
+  "arxiv": "1610.02136",
+  "year": "2016"
+ },
+ "sundararajan": {
+  "authors": "M. Sundararajan, A. Taly, and Q. Yan",
+  "n": 3,
+  "title": "Axiomatic Attribution for Deep Networks",
+  "arxiv": "1703.01365",
+  "year": "2017"
+ },
+ "loshchilov": {
+  "authors": "I. Loshchilov and F. Hutter",
+  "n": 2,
+  "title": "Decoupled Weight Decay Regularization",
+  "arxiv": "1711.05101",
+  "year": "2017"
+ },
+ "wolf": {
+  "authors": "T. Wolf et al.",
+  "n": 22,
+  "title": "HuggingFace's Transformers: State-of-the-art Natural Language Processing",
+  "arxiv": "1910.03771",
+  "year": "2019"
+ },
+ "paszke": {
+  "authors": "A. Paszke et al.",
+  "n": 21,
+  "title": "PyTorch: An Imperative Style, High-Performance Deep Learning Library",
+  "arxiv": "1912.01703",
+  "year": "2019"
+ },
+ "roark": {
+  "authors": "B. Roark et al.",
+  "n": 7,
+  "title": "Processing South Asian Languages Written in the Latin Script: the Dakshina Dataset",
+  "arxiv": "2007.01176",
+  "year": "2020"
+ },
+ "madhani": {
+  "authors": "Y. Madhani et al.",
+  "n": 8,
+  "title": "Aksharantar: Open Indic-language Transliteration datasets and models for the Next Billion Users",
+  "arxiv": "2205.03018",
+  "year": "2022"
+ },
+ "chancellor": {
+  "authors": "S. Chancellor and M. D. Choudhury",
+  "n": 2,
+  "title": "Methods in predictive techniques for mental health status on social media: a critical review",
+  "journal": "npj Digital Medicine",
+  "vol": "3",
+  "issue": "1",
+  "page": "43",
+  "year": "2020",
+  "doi": "10.1038/s41746-020-0233-7"
+ },
+ "schuster": {
+  "authors": "M. Schuster and K. K. Paliwal",
+  "n": 2,
+  "title": "Bidirectional recurrent neural networks",
+  "journal": "IEEE Transactions on Signal Processing",
+  "vol": "45",
+  "issue": "11",
+  "page": "2673-2681",
+  "year": "1997",
+  "doi": "10.1109/78.650093"
+ },
+ "hochreiter": {
+  "authors": "S. Hochreiter and J. Schmidhuber",
+  "n": 2,
+  "title": "Long Short-Term Memory",
+  "journal": "Neural Computation",
+  "vol": "9",
+  "issue": "8",
+  "page": "1735-1780",
+  "year": "1997",
+  "doi": "10.1162/neco.1997.9.8.1735"
+ }
+}
