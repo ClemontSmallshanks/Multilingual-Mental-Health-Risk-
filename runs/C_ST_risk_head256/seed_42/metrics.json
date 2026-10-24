@@ -1,0 +1,160 @@
+{
+  "experiment": "C_ST_risk_head256",
+  "seed": 42,
+  "tasks": [
+    "risk"
+  ],
+  "model_name": "google/muril-base-cased",
+  "n_parameters": 237950210,
+  "best_epoch": 3,
+  "epochs_run": 3,
+  "best_val_mean_macro_f1": 0.7820991723430748,
+  "train_seconds": 3222.6,
+  "val_inference_seconds": 22.3,
+  "device": "cpu",
+  "peak_gpu_mem_mb": null,
+  "calibration": {
+    "temperature": {
+      "risk": 1.8880106587578915
+    },
+    "emotion_thresholds": null,
+    "fit_on": "validation split"
+  },
+  "val": {
+    "risk": {
+      "n": 425,
+      "accuracy": 0.7858823529411765,
+      "macro_f1": 0.7820991723430748,
+      "weighted_f1": 0.7845987738096777,
+      "macro_precision": 0.7871428571428571,
+      "macro_recall": 0.7803253447583345,
+      "per_class": {
+        "non_stress": {
+          "precision": 0.7942857142857143,
+          "recall": 0.7164948453608248,
+          "f1": 0.7533875338753387,
+          "support": 194
+        },
+        "stress": {
+          "precision": 0.78,
+          "recall": 0.8441558441558441,
+          "f1": 0.8108108108108109,
+          "support": 231
+        }
+      },
+      "confusion_matrix": [
+        [
+          139,
+          55
+        ],
+        [
+          36,
+          195
+        ]
+      ],
+      "ece": 0.038501326617072604,
+      "brier": 0.3072414183678723,
+      "positive_label": "stress",
+      "precision": 0.78,
+      "recall": 0.8441558441558441,
+      "f1": 0.8108108108108109,
+      "decision_threshold": 0.5,
+      "roc_auc": 0.8711563350738609,
+      "pr_auc": 0.8926589834994327,
+      "uncalibrated": {
+        "ece": 0.12951600775999178,
+        "brier": 0.3407530024196257,
+        "macro_f1": 0.7820991723430748,
+        "pr_auc": 0.8926589834994325,
+        "roc_auc": 0.8711563350738609
+      },
+      "by_language": {
+        "en-Latn": {
+          "n": 425,
+          "accuracy": 0.7858823529411765,
+          "macro_f1": 0.7820991723430748,
+          "weighted_f1": 0.7845987738096777,
+          "macro_precision": 0.7871428571428571,
+          "macro_recall": 0.7803253447583345,
+          "per_class": {
+            "non_stress": {
+              "precision": 0.7942857142857143,
+              "recall": 0.7164948453608248,
+              "f1": 0.7533875338753387,
+              "support": 194
+            },
+            "stress": {
+              "precision": 0.78,
+              "recall": 0.8441558441558441,
+              "f1": 0.8108108108108109,
+              "support": 231
+            }
+          },
+          "confusion_matrix": [
+            [
+              139,
+              55
+            ],
+            [
+              36,
+              195
+            ]
+          ],
+          "ece": 0.038501326617072604,
+          "brier": 0.3072414183678723,
+          "positive_label": "stress",
+          "precision": 0.78,
+          "recall": 0.8441558441558441,
+          "f1": 0.8108108108108109,
+          "decision_threshold": 0.5,
+          "roc_auc": 0.8711563350738609,
+          "pr_auc": 0.8926589834994327
+        }
+      },
+      "by_source": {
+        "dreaddit": {
+          "n": 425,
+          "accuracy": 0.7858823529411765,
+          "macro_f1": 0.7820991723430748,
+          "weighted_f1": 0.7845987738096777,
+          "macro_precision": 0.7871428571428571,
+          "macro_recall": 0.7803253447583345,
+          "per_class": {
+            "non_stress": {
+              "precision": 0.7942857142857143,
+              "recall": 0.7164948453608248,
+              "f1": 0.7533875338753387,
+              "support": 194
+            },
+            "stress": {
+              "precision": 0.78,
+              "recall": 0.8441558441558441,
+              "f1": 0.8108108108108109,
+              "support": 231
+            }
+          },
+          "confusion_matrix": [
+            [
+              139,
+              55
+            ],
+            [
+              36,
+              195
+            ]
+          ],
+          "ece": 0.038501326617072604,
+          "brier": 0.3072414183678723,
+          "positive_label": "stress",
+          "precision": 0.78,
+          "recall": 0.8441558441558441,
+          "f1": 0.8108108108108109,
+          "decision_threshold": 0.5,
+          "roc_auc": 0.8711563350738609,
+          "pr_auc": 0.8926589834994327
+        }
+      }
+    }
+  },
+  "test": null
+}
